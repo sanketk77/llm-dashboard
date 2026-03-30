@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Mastery Journey - Dashboard</title>
+
+    <!-- SCORM -->
+    <script src="APIWrapper.js"></script>
+    <script src="scormdriver.js"></script>
+
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --success: #2e7d32;
+            --bg: #f8f9fa;
+            --text-main: #202124;
+            --text-sub: #5f6368;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .level-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .step-btn {
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            background: #eee;
+            pointer-events: none;
+            text-decoration: none;
+        }
+
+        .unlocked {
+            background: white;
+            border: 1px solid blue;
+            pointer-events: auto;
+        }
+
+        .completed {
+            background: #d4edda;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h3>JADE GLOBAL AI</h3>
+    <button onclick="resetProgress()">Reset</button>
+</div>
+
+<div class="main-content">
+
+    <h1>LLM Mastery Journey</h1>
+
+    <!-- LEVEL 1 -->
+    <div class="level-card">
+        <h2>Level 1</h2>
+        <div class="grid">
+            <a href="basics/pre_assessment.html" class="step-btn unlocked" id="basics-pre">Pre</a>
+            <a href="basics/content.html" class="step-btn" id="basics-ppt">Content</a>
+            <a href="basics/post_assessment.html" class="step-btn" id="basics-post">Quiz</a>
+            <a href="basics/assignment.html" class="step-btn" id="basics-assign">Assign</a>
+        </div>
+    </div>
+
+    <!-- LEVEL 2 -->
+    <div class="level-card">
+        <h2>Level 2</h2>
+        <div class="grid">
+            <a href="intermediate/int_pre_assessment.html" class="step-btn unlocked" id="int-pre">Pre</a>
+            <a href="intermediate/int_content.html" class="step-btn" id="int-ppt">Content</a>
+            <a href="intermediate/int_post_assessment.html" class="step-btn" id="int-post">Quiz</a>
+            <a href="intermediate/int_assignment.html" class="step-btn" id="int-assign">Assign</a>
+        </div>
+    </div>
+
+    <!-- LEVEL 3 -->
+    <div class="level-card">
+        <h2>Level 3</h2>
+        <div class="grid">
+            <a href="advance/adv_pre_assessment.html" class="step-btn unlocked" id="adv-pre">Pre</a>
+            <a href="advance/adv_content.html" class="step-btn" id="adv-ppt">Content</a>
+            <a href="advance/adv_post_assessment.html" class="step-btn" id="adv-post">Quiz</a>
+            <a href="advance/adv_assignment.html" class="step-btn" id="adv-assign">Assign</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+//////////////////////////
+// 🔥 SCORM INIT
+//////////////////////////
+
+function initSCORM() {
+    if (typeof scorm !== "undefined") {
+        scorm.init();
+        scorm.set("cmi.core.lesson_status", "incomplete");
+        scorm.save();
+    }
+}
+
+//////////////////////////
+// 🔥 COMPLETE COURSE
+//////////////////////////
+
+function completeCourse() {
+    if (typeof scorm !== "undefined") {
+        scorm.set("cmi.core.lesson_status", "completed");
+        scorm.set("cmi.core.score.raw", "100");
+        scorm.save();
+        scorm.quit();
+    }
+}
+
+//////////////////////////
+// PROGRESS LOGIC
+//////////////////////////
+
+function checkProgress() {
+    const levels = ['basics', 'int', 'adv'];
+
+    levels.forEach(lvl => {
+
+        const preDone = localStorage.getItem(`${lvl}_pre_completed`);
+        const postDone = localStorage.getItem(`${lvl}_post_completed`);
+        const assignDone = localStorage.getItem(`${lvl}_assign_completed`);
+
+        if (preDone) {
+            document.getElementById(`${lvl}-pre`).classList.add('completed');
+            document.getElementById(`${lvl}-ppt`).classList.add('unlocked');
+            document.getElementById(`${lvl}-post`).classList.add('unlocked');
+        }
+
+        if (postDone) {
+            document.getElementById(`${lvl}-post`).classList.add('completed');
+            document.getElementById(`${lvl}-assign`).classList.add('unlocked');
+        }
+
+        if (assignDone) {
+            document.getElementById(`${lvl}-assign`).classList.add('completed');
+        }
+    });
+
+    checkFullCompletion();
+}
+
+//////////////////////////
+// 🔥 FINAL COMPLETION CHECK
+//////////////////////////
+
+function checkFullCompletion() {
+    const allDone =
+        localStorage.getItem("basics_assign_completed") &&
+        localStorage.getItem("int_assign_completed") &&
+        localStorage.getItem("adv_assign_completed");
+
+    if (allDone) {
+        completeCourse();  // 🔥 LMS WILL MARK COMPLETE
+    }
+}
+
+//////////////////////////
+// RESET
+//////////////////////////
+
+function resetProgress() {
+    localStorage.clear();
+    location.reload();
+}
+
+//////////////////////////
+// INIT
+//////////////////////////
+
+window.onload = function () {
+    initSCORM();      // 🔥 REQUIRED
+    checkProgress();
+};
+
+</script>
+
+</body>
+</html>

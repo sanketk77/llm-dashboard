@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../scormdriver.js"></script>
+    <script src="../APIWrapper.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced — Engineering Assignment</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --success: #2e7d32;
+            --bg: #f8f9fa;
+            --text-main: #202124;
+            --text-sub: #5f6368;
+            --white: #ffffff;
+            --border: #e0e0e0;
+            --code-bg: #1e1e1e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
+
+        /* Sidebar Navigation */
+        .sidebar { 
+            width: 260px; 
+            background: var(--white); 
+            border-right: 1px solid var(--border); 
+            padding: 2rem 1.5rem; 
+            display: flex; 
+            flex-direction: column; 
+            position: fixed; 
+            height: 100vh; 
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .exit-link {
+            text-decoration: none;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .exit-link:hover { color: var(--primary); }
+
+        /* Main Content Area */
+        .main-content { flex: 1; padding: 3rem; max-width: 1000px; margin-left: 260px; }
+        .header { margin-bottom: 2rem; }
+        .badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 4px 12px; border-radius: 4px; background: #e8f0fe; color: #1967d2; text-transform: uppercase; margin-bottom: 10px; }
+        
+        /* Assignment Card UI */
+        .assignment-card { background: var(--white); border-radius: 16px; border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem; display: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .assignment-card.active { display: block; animation: fadeIn 0.4s ease; }
+
+        .instruction { font-size: 1.1rem; margin-bottom: 1.5rem; line-height: 1.6; color: var(--text-main); }
+        
+        textarea { width: 100%; height: 220px; background: var(--code-bg); color: #d4d4d4; font-family: 'Consolas', 'Monaco', monospace; padding: 20px; border-radius: 12px; border: none; font-size: 14px; resize: vertical; margin-bottom: 15px; line-height: 1.5; }
+        
+        /* Solution Reveal UI */
+        .solution-box { display: none; background: #e6f4ea; padding: 1.5rem; border-radius: 12px; border-left: 5px solid var(--success); color: #0d652d; margin-top: 15px; }
+        .solution-box.show { display: block; }
+        .solution-box pre { font-family: 'Consolas', monospace; font-size: 13px; margin-top: 10px; white-space: pre-wrap; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 4px; }
+
+        /* Navigation Dots */
+        .nav-dots { display: flex; gap: 10px; justify-content: center; margin: 2rem 0; flex-wrap: wrap; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; background: #dadce0; cursor: pointer; transition: 0.3s; border: 2px solid transparent; }
+        .dot.current { background: var(--primary); transform: scale(1.2); border-color: #e8f0fe; }
+        .dot.solved { background: var(--success); }
+
+        /* Controls */
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+        button { padding: 12px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: white; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-success { background: var(--success); color: white; border: none; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+    <div style="margin-top: 3rem;">
+        <p style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-sub);">Advanced Module</p>
+        <p id="progress-text" style="color: var(--primary); font-weight: 500;">Task 1 of 10</p>
+    </div>
+    <div class="sidebar-footer">
+        <a href="../index.html" class="exit-link">← Return to Dashboard</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <div class="badge">Architecture & Engineering</div>
+        <h1>Advanced LLM Practical</h1>
+        <p style="color: var(--text-sub);">Implement the core logic for production-grade AI systems.</p>
+    </div>
+
+    <div id="assignment-container"></div>
+
+    <div id="dots-container" class="nav-dots"></div>
+
+    <div class="controls">
+        <button id="prev-btn" onclick="move(-1)" disabled>Previous</button>
+        <button id="submit-code-btn" class="btn-success" onclick="submitCode()">Submit Solution</button>
+        <button id="next-btn" class="btn-primary" onclick="move(1)" style="display:none">Next Engineering Task</button>
+    </div>
+</div>
+
+<script>
+    // Paste your Detailed Questions Array here
+    const tasks = [
+    {
+        topic: "Autonomous Agent Architecture",
+        instruction: `
+            <strong>Requirement:</strong> A hedge fund wants to automate 'Stock Alerts'. The system must fetch real-time data and email the CFO.<br>
+            <strong>Technical Task:</strong> Implement the <strong>Think-Act-Observe</strong> loop logic. Your code must decide when to call a 'Market API' and when to call an 'Email Tool'.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Define the loop cycle.</li>
+                <li>Identify the specific tool for $900+ price retrieval.</li>
+            </ul>`,
+        solution: "Logical Engineering Flow[cite: 516, 534]:\n1. Think: User needs NVDA price. I need external data.\n2. Act: Call stock_api_tool(ticker='NVDA').\n3. Observe: API returns '$905.50'.\n4. Think: I have the data; now I must format the email summary.\n5. Act: Call email_send_tool(to='cfo@global.com', body='NVDA Alert: $905.50').\n6. Observe: Receive 'Success' status from SMTP server."
+    },
+    {
+        topic: "Stateful Workflows with LangGraph",
+        instruction: `
+            <strong>Requirement:</strong> An HR system needs to process 'Leave Requests' but requires a human-in-the-loop for requests over 3 days.<br>
+            <strong>Technical Task:</strong> Design a stateful graph. Define the <strong>Nodes</strong> and the specific LangGraph function used to pause execution for a manager.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Define conditional branching logic.</li>
+                <li>Implement the human-approval 'interrupt'.</li>
+            </ul>`,
+        solution: "Architecture Components[cite: 636, 682]:\n- Node 1: check_eligibility (updates shared 'State').\n- Conditional Edge: \n    if leave_days > 3 -> route to 'manager_approval' node.\n    else -> route to 'auto_approve' node.\n- Node 2 (Critical): manager_approval. Use the <strong>interrupt()</strong> feature [cite: 684] to pause the graph and wait for human input via the state dictionary."
+    },
+    {
+        topic: "Multi-Agent Coordination (Supervisor)",
+        instruction: `
+            <strong>Requirement:</strong> A consulting firm needs to generate 50-page competitor reports in minutes instead of days.<br>
+            <strong>Technical Task:</strong> Design a <strong>Supervisor + Workers</strong> architecture. Describe how the Supervisor prevents 'context overflow' by delegating to specialists.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Name 3 specialized worker roles.</li>
+                <li>Define the Supervisor's role in the final assembly.</li>
+            </ul>`,
+        solution: "System Design [cite: 711, 737]:\n- Supervisor Role: Acts as the orchestrator; reads the goal and partitions it into sub-tasks [cite: 712].\n- Worker 1: Web Scraper (finds competitor news) [cite: 739].\n- Worker 2: Financial Analyst (pulls revenue APIs) [cite: 741].\n- Worker 3: Quality Agent (fact-checks to prevent hallucination)[cite: 745].\n- Assembly: Supervisor merges individual worker outputs into one report."
+    },
+    {
+        topic: "Performance: Semantic Caching",
+        instruction: `
+            <strong>Requirement:</strong> Your chatbot costs $500/day. 40% of questions are similar (e.g., 'What are your hours?' and 'When do you open?').<br>
+            <strong>Technical Task:</strong> Write a Python function for a <strong>Semantic Cache</strong> using a Vector DB to return responses without calling the LLM API.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Check for 'meaning' similarity, not exact text.</li>
+                <li>Provide logic to save new answers to the cache.</li>
+            </ul>`,
+        solution: "Cost Optimization Code [cite: 261, 273]:\ncache = {} # Conceptually a Vector DB\ndef ask_bot(query):\n    # 1. Search cache for 'Semantic Similarity' [cite: 261]\n    if is_similar(query, cache):\n        return cache[query] # 0ms response, $0 cost [cite: 263]\n    \n    # 2. If Miss: Call LLM API\n    res = client.chat.completions.create(model='gpt-4o-mini', messages=[...])\n    # 3. Store for next time\n    cache[query] = res.choices[0].message.content\n    return cache[query]"
+    },
+    {
+        topic: "Security: Output Guardrails",
+        instruction: `
+            <strong>Requirement:</strong> A chatbot must never promise a 'Refund' or 'Discount' that isn't in the official company policy.<br>
+            <strong>Technical Task:</strong> Implement an <strong>Output Guardrail</strong> wrapper. Your code must intercept the LLM response before the user sees it.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Define a list of restricted keywords.</li>
+                <li>Add a fallback refusal message if the model goes off-policy.</li>
+            </ul>`,
+        solution: "Security Wrapper [cite: 36, 58]:\ndef secure_output_wrapper(llm_response):\n    restricted = ['refund', 'discount', 'free']\n    # Output Guardrail: checks before user sees it [cite: 58]\n    if any(word in llm_response.lower() for word in restricted):\n        # Logic: Cross-check against RAG grounded policy [cite: 42]\n        if not is_valid_policy(llm_response):\n            return \"I cannot confirm that. Please wait for an agent.\"\n    return llm_response"
+    },
+    {
+        topic: "RAG Evaluation (RAGAs)",
+        instruction: `
+            <strong>Requirement:</strong> Your RAG bot has a low 'Faithfulness' score of 0.58. Users are complaining about 'confidently wrong' answers.<br>
+            <strong>Technical Task:</strong> Use the <strong>RAGAs Framework</strong> logic to diagnose the system. Explain what 0.58 means technically.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Define the Faithfulness metric.</li>
+                <li>Identify the 'Engineering Fix' (Prompting vs. Retrieval).</li>
+            </ul>`,
+        solution: "Evaluation Diagnostic [cite: 169, 172]:\n- Meaning: A score of 0.58 indicates the LLM is hallucinating facts nearly 40% of the time [cite: 172].\n- Technical Fix 1: Improve 'System Prompt' to enforce grounding in retrieved context [cite: 156].\n- Technical Fix 2: Check 'Context Recall' [cite: 165] to ensure retrieved documents actually contain the answer."
+    },
+    {
+        topic: "Cost Optimization: Model Routing",
+        instruction: `
+            <strong>Requirement:</strong> An app processes 1 million queries daily. You need to cut the $30,000/day bill by 70%.<br>
+            <strong>Technical Task:</strong> Build a <strong>Model Router</strong> that implements 'Tiered Selection' based on task complexity.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Route simple spam/FAQ to a Tier 1 model.</li>
+                <li>Route complex audits to a Tier 3 model.</li>
+            </ul>`,
+        solution: "Routing Architecture [cite: 237, 241]:\ndef model_router(query):\n    if is_simple_task(query):\n        # Route to Tier 1: Small/Fast (GPT-4o-mini/Haiku) [cite: 242]\n        return call_llm(model='gpt-4o-mini', cost='$0.001/1K')\n    else:\n        # Route to Tier 3: Large/Reasoning (GPT-4 Turbo/Opus) [cite: 252]\n        return call_llm(model='gpt-4-turbo', cost='$0.05/1K')\n# Saves ~70-80% cost[cite: 240]."
+    },
+    {
+        topic: "Observability (LangSmith)",
+        instruction: `
+            <strong>Requirement:</strong> An agent is stuck in an infinite loop, repeating the same tool call. The logs are empty.<br>
+            <strong>Technical Task:</strong> Describe the <strong>Observability</strong> process using LangSmith to break the loop without a code redeploy.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Explain 'Tracing'.</li>
+                <li>Use the 'Playground' fix method.</li>
+            </ul>`,
+        solution: "Observability Process[cite: 765, 770]:\n1. Open the failed trace in LangSmith [cite: 774] to see the tree of tool calls.\n2. Identify the specific Node outputting incorrect state[cite: 767].\n3. Click 'Open in Playground' [cite: 782] to pull the exact failed prompt.\n4. Tweak system instructions in the playground to fix the loop logic and re-run instantly[cite: 783, 785]."
+    },
+    {
+        topic: "Hybrid Deployment Architecture",
+        instruction: `
+            <strong>Requirement:</strong> A hospital must summarize patient data but PHI (Protected Health Information) cannot leave their servers.<br>
+            <strong>Technical Task:</strong> Decide between <strong>Serverless API</strong> vs. <strong>Self-Hosted OSS</strong>. Provide the technical reasoning.<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Assess privacy vs. intelligence.</li>
+                <li>Name a specific self-hosting tool (e.g., Ollama/vLLM).</li>
+            </ul>`,
+        solution: "Architecture Decision [cite: 306, 310]:\n- Decision: Hospital must use <strong>Self-Hosted OSS Model</strong> [cite: 306].\n- Reasoning: Serverless APIs send data to external vendors[cite: 303]. OSS (Llama 3) on local GPUs ensures data stays private [cite: 308].\n- Tools: Deploy via <strong>Ollama or vLLM</strong> on private infrastructure[cite: 307]."
+    },
+    {
+        topic: "Latency: Streaming Implementation",
+        instruction: `
+            <strong>Requirement:</strong> Users are abandoning your chatbot because it takes 5 seconds to load the first word.<br>
+            <strong>Technical Task:</strong> Implement <strong>Streaming</strong>. Explain the impact on 'Time to First Token' (TTFT).<br>
+            <strong>Key Requirements:</strong> 
+            <ul>
+                <li>Provide the specific API parameter for streaming.</li>
+                <li>Explain the difference in TTFT.</li>
+            </ul>`,
+        solution: "Latency Engineering [cite: 265, 269]:\n- Impact: TTFT drops from 4 seconds to ~180ms [cite: 269].\n- Code Parameter: In the completions API call, set <strong>stream=True</strong> [cite: 291].\n- Logic: Use a 'for chunk in stream' loop to print/send tokens to the UI as they generate[cite: 293]."
+    }
+];
+
+    let current = 0;
+    let solved = {};
+
+    function buildTasks() {
+        const container = document.getElementById('assignment-container');
+        const dotsContainer = document.getElementById('dots-container');
+        
+        tasks.forEach((t, i) => {
+            // Build Question Cards
+            const div = document.createElement('div');
+            div.className = `assignment-card ${i === 0 ? 'active' : ''}`;
+            div.id = `task-${i}`;
+            div.innerHTML = `
+                <div class="badge">Task ${i + 1}: ${t.topic}</div>
+                <div class="instruction">${t.instruction}</div>
+                <textarea id="input-${i}" placeholder="Enter your architectural logic or Python code here..."></textarea>
+                <div class="solution-box" id="sol-${i}">
+                    <strong>Technical Solution & Best Practices:</strong>
+                    <pre>${t.solution}</pre>
+                </div>
+            `;
+            container.appendChild(div);
+
+            // Build Navigation Dots
+            const dot = document.createElement('div');
+            dot.className = `dot ${i === 0 ? 'current' : ''}`;
+            dot.id = `dot-${i}`;
+            dot.onclick = () => jumpTo(i);
+            dotsContainer.appendChild(dot);
+        });
+        updateControls();
+    }
+
+    function jumpTo(index) {
+        // Hide existing
+        document.getElementById(`task-${current}`).classList.remove('active');
+        document.getElementById(`dot-${current}`).classList.remove('current');
+        
+        // Show new
+        current = index;
+        document.getElementById(`task-${current}`).classList.add('active');
+        document.getElementById(`dot-${current}`).classList.add('current');
+        
+        updateControls();
+    }
+
+    function submitCode() {
+        // Reveal solution and mark dot as green
+        document.getElementById(`sol-${current}`).classList.add('show');
+        document.getElementById(`dot-${current}`).classList.add('solved');
+        solved[current] = true;
+        
+        updateControls();
+    }
+
+    function move(dir) {
+        const nextIndex = Math.max(0, Math.min(tasks.length - 1, current + dir));
+        jumpTo(nextIndex);
+    }
+
+    function updateControls() {
+        document.getElementById('progress-text').textContent = `Task ${current + 1} of ${tasks.length}`;
+        document.getElementById('prev-btn').disabled = (current === 0);
+        
+        const isSolved = solved[current];
+        
+        // Show/Hide Submit vs Next based on solved status
+        document.getElementById('submit-code-btn').style.display = isSolved ? 'none' : 'block';
+        document.getElementById('next-btn').style.display = isSolved ? 'block' : 'none';
+
+        // Update Next button behavior for the final question
+        const nextBtn = document.getElementById('next-btn');
+        if (current === tasks.length - 1 && isSolved) {
+            nextBtn.textContent = "Finish Advanced Course";
+            nextBtn.onclick = completeModule;
+        } else {
+            nextBtn.textContent = "Next Engineering Task";
+            nextBtn.onclick = () => move(1);
+        }
+    }
+
+    function completeModule() {
+        // Store completion and update dashboard state
+        localStorage.setItem('adv_assign_completed', 'true');
+        
+        // Standard SCORM completion call
+        if(typeof pipwerks !== "undefined"){
+            pipwerks.SCORM.set("cmi.core.lesson_status", "completed");
+            pipwerks.SCORM.save();
+        }
+        
+        alert("Advanced Engineering Practical Complete! You are now an LLM Engineer.");
+        window.location.href = '../index.html';
+    }
+
+    window.onload = buildTasks;
+</script>
+</body>
+</html>
