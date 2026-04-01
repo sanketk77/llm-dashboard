@@ -19,7 +19,27 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Google Sans', Roboto, sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
 
-        .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); padding: 2rem 1.5rem; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+        .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
         .main-content { flex: 1; padding: 3rem; max-width: 1000px; margin-left: 260px; }
 
         .header { margin-bottom: 2rem; }
@@ -47,7 +67,11 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+    <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
     <div style="margin-top: 3rem;">
         <p style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-sub);">Basics Level</p>
         <p id="progress-text" style="color: var(--primary); font-weight: 500;">Task 1 of 10</p>
@@ -71,7 +95,19 @@
 </div>
 
 <script>
-    const tasks = [
+    // 1. GATEKEEPER: Ensure the user passed the Intermediate Post-Assessment first
+    window.onload = function() {
+        const postDone = localStorage.getItem('int_post_completed');
+        if (!postDone) {
+            alert("Access Denied: Please complete the Intermediate Post-Assessment (Quiz) first.");
+            window.location.href = "int_post_assessment.html";
+            return;
+        }
+        buildTasks();
+        document.getElementById('progress-text').textContent = `Task 1 of ${tasks.length}`;
+    };
+
+     const tasks = [
 {
 topic: "Structured Prompting",
 instruction: "Write a Python prompt that asks an LLM to summarize a given variable 'article' into exactly 3 bullet points for a business audience.",
@@ -146,9 +182,24 @@ solution: "prompt = f\"\"\"\nAnswer the question using ONLY the provided context
     }
 
     function submitCode() {
+        // Show the solution for the current task
         document.getElementById(`sol-${current}`).classList.add('show');
         document.getElementById('submit-code-btn').style.display = 'none';
         document.getElementById('next-btn').style.display = 'block';
+
+        // Update logic for the final task
+        if (current === tasks.length - 1) {
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.textContent = "Finish & Return to Dashboard";
+            nextBtn.classList.remove('btn-primary');
+            nextBtn.classList.add('btn-success');
+            
+            // Set final completion logic for Intermediate Level
+            nextBtn.onclick = () => {
+                localStorage.setItem('int_assign_completed', 'true');
+                window.location.href = '../index.html';
+            };
+        }
     }
 
     function move(dir) {
@@ -158,20 +209,12 @@ solution: "prompt = f\"\"\"\nAnswer the question using ONLY the provided context
         
         document.getElementById('progress-text').textContent = `Task ${current + 1} of ${tasks.length}`;
         document.getElementById('prev-btn').disabled = (current === 0);
+        
+        // Reset buttons for the new task
         document.getElementById('submit-code-btn').style.display = 'block';
         document.getElementById('next-btn').style.display = 'none';
-
-        if (current === tasks.length - 1) {
-            const nextBtn = document.getElementById('next-btn');
-            nextBtn.textContent = "Finish & Return";
-            nextBtn.onclick = () => {
-                localStorage.setItem('basics_assign_completed', 'true');
-                window.location.href = '../index.html';
-            };
-        }
     }
-
-    window.onload = buildTasks;
 </script>
 </body>
 </html>
+

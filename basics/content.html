@@ -25,14 +25,27 @@
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 260px;
-            background: var(--white);
-            border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            position: fixed;
-            height: 100vh;
-        }
+        .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
 
         .main-content {
             flex: 1;
@@ -124,7 +137,11 @@
 <body>
 
 <div class="sidebar">
-    <h3 style="color: var(--primary);">JADE GLOBAL AI</h3>
+   <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
 
     <div style="margin-top: 30px;">
         <p style="font-size: 12px; color: var(--text-sub);">Current Level</p>
@@ -170,17 +187,16 @@
         </div>
     </div>
 
-    <!-- PDF -->
+    <!-- PDF SECTION -->
     <div id="ppt-content" class="content-area">
         <div class="card">
             <h3>Technical Slides</h3>
 
-            <div class="pdf-container">
-                <embed src="LLM_BASIC_Content.pdf" width="100%" height="100%">
-            </div>
+            <!-- 🔥 PASTE YOUR PDF URL BELOW -->
+            <iframe src="https://res.cloudinary.com/dj3shi5ju/raw/upload/v1774954261/llm_mastery/kbaupewpqii8wvzgszwr.pdf"></iframe>
+
         </div>
     </div>
-
     <!-- FOOTER -->
     <div class="footer-nav">
         <a href="../index.html" class="btn btn-outline">Back</a>
@@ -190,6 +206,15 @@
 </div>
 
 <script>
+// GATEKEEPER: Prevent access if Pre-Assessment isn't done
+window.onload = function() {
+    const preCompleted = localStorage.getItem('basics_pre_completed');
+    if (!preCompleted) {
+        alert("Please complete the Pre-Assessment first!");
+        window.location.href = "pre_assessment.html";
+    }
+};
+
 function switchMode(mode, btn) {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -199,6 +224,10 @@ function switchMode(mode, btn) {
 }
 
 function goNext() {
+    // Mark content as viewed/completed
+    localStorage.setItem('basics_content_completed', 'true');
+    
+    // Proceed to Post-Assessment
     window.location.href = "post_assessment.html";
 }
 </script>

@@ -5,117 +5,722 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Mastery Journey - Dashboard</title>
 
-    <!-- SCORM -->
-    <script src="APIWrapper.js"></script>
-    <script src="scormdriver.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --primary: #1a73e8;
+            --primary-light: #5b9ef5;
+            --primary-dark: #0d47a1;
             --success: #2e7d32;
-            --bg: #f8f9fa;
-            --text-main: #202124;
-            --text-sub: #5f6368;
+            --success-light: #66bb6a;
+            --warning: #f57c00;
+            --danger: #c62828;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --text-main: #1a1a1a;
+            --text-sub: #666666;
+            --border: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: var(--bg);
-            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-main) 0%, #eef2f7 100%);
+            color: var(--text-main);
             display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* ============ SIDEBAR ============ */
         .sidebar {
-            width: 250px;
-            background: white;
-            padding: 20px;
-            border-right: 1px solid #ddd;
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 30px 20px;
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            color: white;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
         }
 
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar-logo {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .sidebar h3 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-light), var(--success));
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ============ MAIN CONTENT ============ */
         .main-content {
             flex: 1;
-            padding: 30px;
+            margin-left: 280px;
+            padding: 40px;
+            max-width: 1400px;
+            width: 100%;
+            animation: fadeIn 0.6s ease;
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 16px;
+            color: var(--text-sub);
+        }
+
+        /* ============ LEVEL CARDS ============ */
         .level-card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
+            background: var(--bg-card);
+            padding: 35px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .level-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .level-badge {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .level-info h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .level-info p {
+            font-size: 13px;
+            color: var(--text-sub);
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
+        /* ============ STEP BUTTONS ============ */
         .step-btn {
-            padding: 10px;
+            padding: 16px;
             text-align: center;
-            border-radius: 8px;
-            background: #eee;
-            pointer-events: none;
+            border-radius: 10px;
+            background: #f0f0f0;
+            border: 2px solid var(--border);
             text-decoration: none;
+            cursor: not-allowed;
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .unlocked {
+        .step-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .step-btn:hover::before {
+            left: 100%;
+        }
+
+        .step-btn i {
+            font-size: 18px;
+        }
+
+        /* Locked State */
+        .step-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .step-btn.locked i {
+            color: #999;
+        }
+
+        /* Unlocked State */
+        .step-btn.unlocked {
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .step-btn.unlocked:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(26, 115, 232, 0.3);
+        }
+
+        .step-btn.unlocked:active {
+            transform: translateY(-2px);
+        }
+
+        /* Completed State */
+        .step-btn.completed {
+            background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
+            border: 2px solid var(--success);
+            color: white;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+        }
+
+        .step-btn.completed:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .step-btn.completed::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 0.6s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .level-progress {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .progress-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .progress-item-label {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 5px;
+        }
+
+        .progress-item-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* ============ COMPLETION BANNER ============ */
+        .completion-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .completion-banner.active {
+            display: flex;
+        }
+
+        .completion-content {
             background: white;
-            border: 1px solid blue;
-            pointer-events: auto;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .completed {
-            background: #d4edda;
-            pointer-events: auto;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
+        .completion-icon {
+            font-size: 80px;
+            color: var(--success);
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .completion-content h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .completion-content p {
+            font-size: 16px;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+        }
+
+        .completion-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .completion-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.3);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                margin-left: 240px;
+                padding: 25px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 20px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .level-card {
+                padding: 20px;
+            }
+
+            .completion-content {
+                padding: 30px;
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .step-btn {
+                padding: 12px;
+                font-size: 12px;
+            }
+
+            .level-progress {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .level-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .level-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .level-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .level-card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
     </style>
 </head>
 
 <body>
 
+<!-- ============ SIDEBAR ============ -->
 <div class="sidebar">
-    <h3>JADE GLOBAL AI</h3>
-    <button onclick="resetProgress()">Reset</button>
+    <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo_white.webp" alt="Jade Global Logo" class="logo-img">
+    </div>
 </div>
 
+    <div class="progress-section">
+        <div class="progress-label">Overall Progress</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="overall-progress"></div>
+        </div>
+        <div class="progress-stats">
+            <span id="progress-completed">0/12</span>
+            <span id="progress-percent">0%</span>
+        </div>
+    </div>
+
+    <button class="reset-btn" onclick="confirmReset()">
+        <i class="fas fa-redo"></i> Reset Progress
+    </button>
+</div>
+
+<!-- ============ MAIN CONTENT ============ -->
 <div class="main-content">
 
-    <h1>LLM Mastery Journey</h1>
+    <div class="header">
+        <h1>🚀 LLM Mastery Journey</h1>
+        <p class="header-subtitle">Master Large Language Models from basics to advanced concepts</p>
+    </div>
 
     <!-- LEVEL 1 -->
     <div class="level-card">
-        <h2>Level 1</h2>
+        <div class="level-header">
+            <div class="level-badge">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="level-info">
+                <h2>Level 1: Foundations</h2>
+                <p>Learn the fundamentals of LLMs and AI basics</p>
+            </div>
+        </div>
         <div class="grid">
-            <a href="basics/pre_assessment.html" class="step-btn unlocked" id="basics-pre">Pre</a>
-            <a href="basics/content.html" class="step-btn" id="basics-ppt">Content</a>
-            <a href="basics/post_assessment.html" class="step-btn" id="basics-post">Quiz</a>
-            <a href="basics/assignment.html" class="step-btn" id="basics-assign">Assign</a>
+            <a href="basics/pre_assessment.html" class="step-btn unlocked" id="basics-pre" title="Pre-Assessment">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Pre</span>
+            </a>
+            <a href="basics/content.html" class="step-btn" id="basics-ppt" title="Content & Lessons">
+                <i class="fas fa-video"></i>
+                <span>Content</span>
+            </a>
+            <a href="basics/post_assessment.html" class="step-btn" id="basics-post" title="Post-Assessment Quiz">
+                <i class="fas fa-question-circle"></i>
+                <span>Quiz</span>
+            </a>
+            <a href="basics/assignment.html" class="step-btn" id="basics-assign" title="Final Assignment">
+                <i class="fas fa-tasks"></i>
+                <span>Assign</span>
+            </a>
+        </div>
+        <div class="level-progress">
+            <div class="progress-item">
+                <div class="progress-item-label">Completion</div>
+                <div class="progress-item-value" id="basics-completion">0%</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-item-label">Next Step</div>
+                <div class="progress-item-value" id="basics-next" style="font-size: 14px; color: var(--text-sub);">Pre-Assessment</div>
+            </div>
         </div>
     </div>
 
     <!-- LEVEL 2 -->
     <div class="level-card">
-        <h2>Level 2</h2>
+        <div class="level-header">
+            <div class="level-badge" style="background: linear-gradient(135deg, var(--warning) 0%, #ff9800 100%);">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="level-info">
+                <h2>Level 2: Intermediate Concepts</h2>
+                <p>Dive deeper into advanced LLM architectures and training</p>
+            </div>
+        </div>
         <div class="grid">
-            <a href="intermediate/int_pre_assessment.html" class="step-btn unlocked" id="int-pre">Pre</a>
-            <a href="intermediate/int_content.html" class="step-btn" id="int-ppt">Content</a>
-            <a href="intermediate/int_post_assessment.html" class="step-btn" id="int-post">Quiz</a>
-            <a href="intermediate/int_assignment.html" class="step-btn" id="int-assign">Assign</a>
+            <a href="intermediate/int_pre_assessment.html" class="step-btn unlocked" id="int-pre" title="Pre-Assessment">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Pre</span>
+            </a>
+            <a href="intermediate/int_content.html" class="step-btn" id="int-ppt" title="Content & Lessons">
+                <i class="fas fa-video"></i>
+                <span>Content</span>
+            </a>
+            <a href="intermediate/int_post_assessment.html" class="step-btn" id="int-post" title="Post-Assessment Quiz">
+                <i class="fas fa-question-circle"></i>
+                <span>Quiz</span>
+            </a>
+            <a href="intermediate/int_assignment.html" class="step-btn" id="int-assign" title="Final Assignment">
+                <i class="fas fa-tasks"></i>
+                <span>Assign</span>
+            </a>
+        </div>
+        <div class="level-progress">
+            <div class="progress-item">
+                <div class="progress-item-label">Completion</div>
+                <div class="progress-item-value" id="int-completion">0%</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-item-label">Next Step</div>
+                <div class="progress-item-value" id="int-next" style="font-size: 14px; color: var(--text-sub);">Locked</div>
+            </div>
         </div>
     </div>
 
     <!-- LEVEL 3 -->
     <div class="level-card">
-        <h2>Level 3</h2>
+        <div class="level-header">
+            <div class="level-badge" style="background: linear-gradient(135deg, var(--danger) 0%, #e53935 100%);">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <div class="level-info">
+                <h2>Level 3: Advanced Mastery</h2>
+                <p>Master cutting-edge techniques and real-world applications</p>
+            </div>
+        </div>
         <div class="grid">
-            <a href="advance/adv_pre_assessment.html" class="step-btn unlocked" id="adv-pre">Pre</a>
-            <a href="advance/adv_content.html" class="step-btn" id="adv-ppt">Content</a>
-            <a href="advance/adv_post_assessment.html" class="step-btn" id="adv-post">Quiz</a>
-            <a href="advance/adv_assignment.html" class="step-btn" id="adv-assign">Assign</a>
+            <a href="advance/adv_pre_assessment.html" class="step-btn unlocked" id="adv-pre" title="Pre-Assessment">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Pre</span>
+            </a>
+            <a href="advance/adv_content.html" class="step-btn" id="adv-ppt" title="Content & Lessons">
+                <i class="fas fa-video"></i>
+                <span>Content</span>
+            </a>
+            <a href="advance/adv_post_assessment.html" class="step-btn" id="adv-post" title="Post-Assessment Quiz">
+                <i class="fas fa-question-circle"></i>
+                <span>Quiz</span>
+            </a>
+            <a href="advance/adv_assignment.html" class="step-btn" id="adv-assign" title="Final Assignment">
+                <i class="fas fa-tasks"></i>
+                <span>Assign</span>
+            </a>
+        </div>
+        <div class="level-progress">
+            <div class="progress-item">
+                <div class="progress-item-label">Completion</div>
+                <div class="progress-item-value" id="adv-completion">0%</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-item-label">Next Step</div>
+                <div class="progress-item-value" id="adv-next" style="font-size: 14px; color: var(--text-sub);">Locked</div>
+            </div>
         </div>
     </div>
 
+</div>
+
+<!-- ============ COMPLETION BANNER ============ -->
+<div class="completion-banner" id="completion-banner">
+    <div class="completion-content">
+        <div class="completion-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>🎉 Congratulations!</h2>
+        <p>You have successfully completed the LLM Mastery Journey! You're now an LLM expert.</p>
+        <button class="completion-btn" onclick="window.location.reload()">Finish</button>
+    </div>
 </div>
 
 <script>
@@ -137,11 +742,13 @@ function initSCORM() {
 //////////////////////////
 
 function completeCourse() {
+    document.getElementById('completion-banner').classList.add('active');
+    
     if (typeof scorm !== "undefined") {
         scorm.set("cmi.core.lesson_status", "completed");
         scorm.set("cmi.core.score.raw", "100");
         scorm.save();
-        scorm.quit();
+        setTimeout(() => scorm.quit(), 3000);
     }
 }
 
@@ -150,31 +757,80 @@ function completeCourse() {
 //////////////////////////
 
 function checkProgress() {
-    const levels = ['basics', 'int', 'adv'];
+    const levels = [
+        { prefix: 'basics', name: 'Level 1' },
+        { prefix: 'int', name: 'Level 2' },
+        { prefix: 'adv', name: 'Level 3' }
+    ];
 
-    levels.forEach(lvl => {
+    let totalCompleted = 0;
 
-        const preDone = localStorage.getItem(`${lvl}_pre_completed`);
-        const postDone = localStorage.getItem(`${lvl}_post_completed`);
-        const assignDone = localStorage.getItem(`${lvl}_assign_completed`);
+    levels.forEach(level => {
+        const preDone = localStorage.getItem(`${level.prefix}_pre_completed`);
+        const postDone = localStorage.getItem(`${level.prefix}_post_completed`);
+        const assignDone = localStorage.getItem(`${level.prefix}_assign_completed`);
+
+        let levelCompletion = 0;
+        let nextStep = 'Locked';
+
+        // Update UI elements
+        const preBtn = document.getElementById(`${level.prefix}-pre`);
+        const pptBtn = document.getElementById(`${level.prefix}-ppt`);
+        const postBtn = document.getElementById(`${level.prefix}-post`);
+        const assignBtn = document.getElementById(`${level.prefix}-assign`);
 
         if (preDone) {
-            document.getElementById(`${lvl}-pre`).classList.add('completed');
-            document.getElementById(`${lvl}-ppt`).classList.add('unlocked');
-            document.getElementById(`${lvl}-post`).classList.add('unlocked');
+            preBtn.classList.add('completed');
+            preBtn.classList.remove('locked');
+            pptBtn.classList.add('unlocked');
+            pptBtn.classList.remove('locked');
+            postBtn.classList.add('unlocked');
+            postBtn.classList.remove('locked');
+            levelCompletion += 25;
+            nextStep = 'Content';
+        } else {
+            pptBtn.classList.add('locked');
+            postBtn.classList.add('locked');
+            assignBtn.classList.add('locked');
         }
 
         if (postDone) {
-            document.getElementById(`${lvl}-post`).classList.add('completed');
-            document.getElementById(`${lvl}-assign`).classList.add('unlocked');
+            postBtn.classList.add('completed');
+            postBtn.classList.remove('locked');
+            assignBtn.classList.add('unlocked');
+            assignBtn.classList.remove('locked');
+            levelCompletion += 25;
+            nextStep = 'Assignment';
         }
 
         if (assignDone) {
-            document.getElementById(`${lvl}-assign`).classList.add('completed');
+            assignBtn.classList.add('completed');
+            assignBtn.classList.remove('locked');
+            levelCompletion += 25;
+            nextStep = '✓ Complete';
+            totalCompleted++;
         }
+
+        // Update level completion percentage
+        document.getElementById(`${level.prefix}-completion`).textContent = levelCompletion + '%';
+        document.getElementById(`${level.prefix}-next`).textContent = nextStep;
     });
 
+    updateOverallProgress(totalCompleted);
     checkFullCompletion();
+}
+
+//////////////////////////
+// UPDATE OVERALL PROGRESS
+//////////////////////////
+
+function updateOverallProgress(completed) {
+    const total = 12; // 4 steps × 3 levels
+    const progressPercent = Math.round((completed * 4 / total) * 100);
+    
+    document.getElementById('overall-progress').style.width = progressPercent + '%';
+    document.getElementById('progress-completed').textContent = completed * 4 + '/' + total;
+    document.getElementById('progress-percent').textContent = progressPercent + '%';
 }
 
 //////////////////////////
@@ -188,13 +844,19 @@ function checkFullCompletion() {
         localStorage.getItem("adv_assign_completed");
 
     if (allDone) {
-        completeCourse();  // 🔥 LMS WILL MARK COMPLETE
+        setTimeout(() => completeCourse(), 500);
     }
 }
 
 //////////////////////////
-// RESET
+// RESET WITH CONFIRMATION
 //////////////////////////
+
+function confirmReset() {
+    if (confirm('⚠️ Are you sure you want to reset all progress? This action cannot be undone.')) {
+        resetProgress();
+    }
+}
 
 function resetProgress() {
     localStorage.clear();
@@ -205,10 +867,15 @@ function resetProgress() {
 // INIT
 //////////////////////////
 
-window.onload = function () {
-    initSCORM();      // 🔥 REQUIRED
+window.addEventListener('load', function () {
+    initSCORM();
     checkProgress();
-};
+});
+
+// Update progress when returning to page
+window.addEventListener('focus', function () {
+    checkProgress();
+});
 
 </script>
 

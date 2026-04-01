@@ -22,16 +22,27 @@
         body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
 
         /* Sidebar Navigation */
-        .sidebar { 
-            width: 260px; 
-            background: var(--white); 
-            border-right: 1px solid var(--border); 
-            padding: 2rem 1.5rem; 
-            display: flex; 
-            flex-direction: column; 
-            position: fixed; 
-            height: 100vh; 
-        }
+    .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
 
         .sidebar-footer {
             margin-top: auto;
@@ -87,7 +98,11 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+    <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
     <div style="margin-top: 3rem;">
         <p style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-sub);">Advanced Module</p>
         <p id="progress-text" style="color: var(--primary); font-weight: 500;">Task 1 of 10</p>
@@ -116,7 +131,17 @@
 </div>
 
 <script>
-    // Paste your Detailed Questions Array here
+    // 1. GATEKEEPER: Ensure the user passed the Advanced Post-Assessment first
+    window.onload = function() {
+        const postDone = localStorage.getItem('adv_post_completed');
+        if (!postDone) {
+            alert("Access Denied: Please complete the Advanced Post-Assessment (Final Quiz) first.");
+            window.location.href = "adv_post_assessment.html";
+            return;
+        }
+        buildTasks(); // Only initialize the lab if the gatekeeper passes
+    };
+
     const tasks = [
     {
         topic: "Autonomous Agent Architecture",
@@ -240,65 +265,11 @@
     }
 ];
 
+
     let current = 0;
     let solved = {};
 
-    function buildTasks() {
-        const container = document.getElementById('assignment-container');
-        const dotsContainer = document.getElementById('dots-container');
-        
-        tasks.forEach((t, i) => {
-            // Build Question Cards
-            const div = document.createElement('div');
-            div.className = `assignment-card ${i === 0 ? 'active' : ''}`;
-            div.id = `task-${i}`;
-            div.innerHTML = `
-                <div class="badge">Task ${i + 1}: ${t.topic}</div>
-                <div class="instruction">${t.instruction}</div>
-                <textarea id="input-${i}" placeholder="Enter your architectural logic or Python code here..."></textarea>
-                <div class="solution-box" id="sol-${i}">
-                    <strong>Technical Solution & Best Practices:</strong>
-                    <pre>${t.solution}</pre>
-                </div>
-            `;
-            container.appendChild(div);
-
-            // Build Navigation Dots
-            const dot = document.createElement('div');
-            dot.className = `dot ${i === 0 ? 'current' : ''}`;
-            dot.id = `dot-${i}`;
-            dot.onclick = () => jumpTo(i);
-            dotsContainer.appendChild(dot);
-        });
-        updateControls();
-    }
-
-    function jumpTo(index) {
-        // Hide existing
-        document.getElementById(`task-${current}`).classList.remove('active');
-        document.getElementById(`dot-${current}`).classList.remove('current');
-        
-        // Show new
-        current = index;
-        document.getElementById(`task-${current}`).classList.add('active');
-        document.getElementById(`dot-${current}`).classList.add('current');
-        
-        updateControls();
-    }
-
-    function submitCode() {
-        // Reveal solution and mark dot as green
-        document.getElementById(`sol-${current}`).classList.add('show');
-        document.getElementById(`dot-${current}`).classList.add('solved');
-        solved[current] = true;
-        
-        updateControls();
-    }
-
-    function move(dir) {
-        const nextIndex = Math.max(0, Math.min(tasks.length - 1, current + dir));
-        jumpTo(nextIndex);
-    }
+    // ... (Keep buildTasks, jumpTo, submitCode, and move functions as provided previously)
 
     function updateControls() {
         document.getElementById('progress-text').textContent = `Task ${current + 1} of ${tasks.length}`;
@@ -306,14 +277,15 @@
         
         const isSolved = solved[current];
         
-        // Show/Hide Submit vs Next based on solved status
         document.getElementById('submit-code-btn').style.display = isSolved ? 'none' : 'block';
         document.getElementById('next-btn').style.display = isSolved ? 'block' : 'none';
 
-        // Update Next button behavior for the final question
         const nextBtn = document.getElementById('next-btn');
         if (current === tasks.length - 1 && isSolved) {
-            nextBtn.textContent = "Finish Advanced Course";
+            // Final button for the entire Journey
+            nextBtn.textContent = "Finish LLM Mastery Journey";
+            nextBtn.classList.remove('btn-primary');
+            nextBtn.classList.add('btn-success');
             nextBtn.onclick = completeModule;
         } else {
             nextBtn.textContent = "Next Engineering Task";
@@ -322,20 +294,25 @@
     }
 
     function completeModule() {
-        // Store completion and update dashboard state
+        // 1. Set the final completion flag for the Advanced Level
         localStorage.setItem('adv_assign_completed', 'true');
         
-        // Standard SCORM completion call
+        // 2. SCORM Reporting for LMS tracking
         if(typeof pipwerks !== "undefined"){
             pipwerks.SCORM.set("cmi.core.lesson_status", "completed");
+            pipwerks.SCORM.set("cmi.core.score.raw", "100");
             pipwerks.SCORM.save();
         }
         
-        alert("Advanced Engineering Practical Complete! You are now an LLM Engineer.");
+        alert("Congratulations! You have completed the Advanced Engineering Practical and finished the course.");
+        
+        // 3. Return to Dashboard to see the final completion banner
         window.location.href = '../index.html';
     }
 
-    window.onload = buildTasks;
+    // Initialize display logic
 </script>
 </body>
 </html>
+
+

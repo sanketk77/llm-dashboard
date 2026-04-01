@@ -28,18 +28,27 @@
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 260px;
-            background: var(--white);
-            border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            position: fixed;
-            height: 100vh;
-        }
+        .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
 
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
         .main-content {
             flex: 1;
             padding: 3rem;
@@ -125,7 +134,11 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+    <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
     <div style="margin-top: 2rem;">
         <div class="subtitle" style="font-size: 0.8rem; text-transform: uppercase;">Time Elapsed</div>
         <div id="qtimer" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">00:00</div>
@@ -166,6 +179,18 @@
 </div>
 
 <script>
+// 1. GATEKEEPER: Ensure Advanced Content was reviewed first
+window.onload = function() {
+    const contentDone = localStorage.getItem('adv_content_completed');
+    if (!contentDone) {
+        alert("Please review the Advanced Learning Materials before taking the Post-Assessment.");
+        window.location.href = "adv_content.html";
+        return;
+    }
+    buildQuestions();
+    startTimer();
+};
+
 const QS = [
     {
         topic:"LLM Agents",
@@ -309,7 +334,9 @@ const QS = [
     }
 ];
 
-let current=0, answered={}, submitted=false, startTime=Date.now(), timerInt;
+let current=0, answered={}, submitted=false;
+let timeLeft = 20 * 60; // 20 Minutes in seconds
+let timerInt;
 
 function buildQuestions(){
     const c=document.getElementById('questions-container');
@@ -350,8 +377,11 @@ function nav(dir){
 }
 
 function submitAssessment(){
-    submitted=true; clearInterval(timerInt);
-    // Unlocks assignment on dashboard
+    if(submitted) return;
+    submitted=true; 
+    clearInterval(timerInt);
+    
+    // UNLOCK: Mark advanced post-assessment as complete to unlock assignment
     localStorage.setItem('adv_post_completed', 'true');
     showResults();
 }
@@ -362,6 +392,10 @@ function showResults(){
     let correct=0; QS.forEach((q,i)=> { if(answered[i]===q.ans) correct++; });
     const pct=Math.round((correct/QS.length)*100);
 
+    // Calculate time taken
+    const timeSpentSec = (20 * 60) - timeLeft;
+    const m = Math.floor(timeSpentSec / 60), s = timeSpentSec % 60;
+
     r.innerHTML = `
         <div class="results-header">
             <h2 style="margin-bottom:10px">Advanced Quiz Complete</h2>
@@ -371,7 +405,7 @@ function showResults(){
         <div class="result-grid">
             <div class="stat-card"><div style="font-size:24px; font-weight:bold">${correct}</div><div class="subtitle">Correct</div></div>
             <div class="stat-card"><div style="font-size:24px; font-weight:bold">${QS.length-correct}</div><div class="subtitle">Incorrect</div></div>
-            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${document.getElementById('qtimer').textContent}</div><div class="subtitle">Duration</div></div>
+            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${m}:${s<10?'0':''}${s}</div><div class="subtitle">Duration</div></div>
         </div>
 
         <div class="action-buttons">
@@ -396,13 +430,21 @@ function showResults(){
 
 function startTimer(){
     timerInt=setInterval(()=>{
-        const e=Math.round((Date.now()-startTime)/1000);
-        const m=Math.floor(e/60), s=e%60;
-        document.getElementById('qtimer').textContent=`${m}:${s<10?'0':''}${s}`;
+        timeLeft--;
+        const m=Math.floor(timeLeft/60), s=timeLeft%60;
+        const display = document.getElementById('qtimer');
+        display.textContent=`${m}:${s<10?'0':''}${s}`;
+        
+        if(timeLeft <= 60) display.style.color = "var(--error)";
+        
+        if(timeLeft <= 0) {
+            clearInterval(timerInt);
+            alert("Time is up! Submitting your answers.");
+            submitAssessment();
+        }
     },1000);
 }
-
-window.onload = function(){ buildQuestions(); startTimer(); }
 </script>
 </body>
 </html>
+

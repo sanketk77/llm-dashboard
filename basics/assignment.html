@@ -19,7 +19,27 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Google Sans', Roboto, sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
 
-        .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); padding: 2rem 1.5rem; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+  .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
         .main-content { flex: 1; padding: 3rem; max-width: 1000px; margin-left: 260px; }
 
         .header { margin-bottom: 2rem; }
@@ -47,7 +67,11 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+    <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
     <div style="margin-top: 3rem;">
         <p style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-sub);">Basics Level</p>
         <p id="progress-text" style="color: var(--primary); font-weight: 500;">Task 1 of 10</p>
@@ -71,6 +95,18 @@
 </div>
 
 <script>
+    // 1. GATEKEEPER: Ensure the user passed the Post-Assessment first
+    window.onload = function() {
+        const postDone = localStorage.getItem('basics_post_completed');
+        if (!postDone) {
+            alert("Access Denied: Please complete the Post-Assessment first.");
+            window.location.href = "post_assessment.html";
+            return;
+        }
+        buildTasks();
+        document.getElementById('progress-text').textContent = `Task 1 of ${tasks.length}`;
+    };
+
     const tasks = [
         {
             topic: "Simple Prompt Variable",
@@ -79,42 +115,42 @@
         },
         {
             topic: "Role-Based System Message",
-            instruction: "In an API call, you need to set the 'System' role to be a professional debugger. Write the JSON dictionary entry for this system role as used in models like GPT-4[cite: 332].",
+            instruction: "In an API call, you need to set the 'System' role to be a professional debugger. Write the JSON dictionary entry for this system role as used in models like GPT-4.",
             solution: "{'role': 'system', 'content': 'You are a senior software engineer specialized in debugging Python code.'}"
         },
         {
             topic: "Few-Shot Logic",
-            instruction: "Write a prompt string that uses Few-Shot learning to teach the model to convert names to lowercase. Include two examples[cite: 299, 335].",
+            instruction: "Write a prompt string that uses Few-Shot learning to teach the model to convert names to lowercase. Include two examples.",
             solution: "prompt = '''\nInput: ALICE -> Output: alice\nInput: BOB -> Output: bob\nInput: CHARLIE -> Output: '''"
         },
         {
             topic: "Chain of Thought Trigger",
-            instruction: "You have a complex math problem variable 'math_query'. Update the 'prompt' variable to include the specific 'magic phrase' that improves reasoning[cite: 312].",
+            instruction: "You have a complex math problem variable 'math_query'. Update the 'prompt' variable to include the specific 'magic phrase' that improves reasoning.",
             solution: "prompt = f'{math_query}. Let\\'s think step by step.'"
         },
         {
             topic: "Output Format: JSON",
-            instruction: "Request the LLM to provide a response as a JSON object with two keys: 'sentiment' and 'confidence_score'[cite: 284, 334].",
+            instruction: "Request the LLM to provide a response as a JSON object with two keys: 'sentiment' and 'confidence_score'.",
             solution: "prompt = 'Analyze this review and return only a JSON object: {\"sentiment\": \"...\", \"confidence_score\": 0.0}'"
         },
         {
             topic: "Handling Unknown Words (BPE)",
-            instruction: "In a comment, explain how a BPE tokenizer would represent the code-variable 'user_id_fetcher' if 'fetcher' is not in its vocabulary[cite: 605].",
+            instruction: "In a comment, explain how a BPE tokenizer would represent the code-variable 'user_id_fetcher' if 'fetcher' is not in its vocabulary.",
             solution: "# BPE splits unknown words into subwords like ['user', '_', 'id', '_', 'fetch', 'er']"
         },
         {
             topic: "Multi-Turn Conversation",
-            instruction: "Create a list called 'messages' representing a conversation where the user asks 'What is a Transformer?' and the assistant replies 'An architecture'[cite: 758].",
+            instruction: "Create a list called 'messages' representing a conversation where the user asks 'What is a Transformer?' and the assistant replies 'An architecture'.",
             solution: "messages = [\n  {'role': 'user', 'content': 'What is a Transformer?'},\n  {'role': 'assistant', 'content': 'An architecture.'}\n]"
         },
         {
             topic: "Token Limit Truncation",
-            instruction: "Write a simple Python 'if' statement logic that checks if a string variable 'document' is longer than 4000 characters before sending it to an LLM[cite: 668].",
+            instruction: "Write a simple Python 'if' statement logic that checks if a string variable 'document' is longer than 4000 characters before sending it to an LLM.",
             solution: "if len(document) > 4000:\n    print('Document too long for context window.')"
         },
         {
             topic: "Sentiment Analysis Function",
-            instruction: "Define a function 'get_sentiment_prompt(text)' that returns a Zero-Shot prompt asking to classify 'text' as Positive or Negative[cite: 194, 290].",
+            instruction: "Define a function 'get_sentiment_prompt(text)' that returns a Zero-Shot prompt asking to classify 'text' as Positive or Negative.",
             solution: "def get_sentiment_prompt(text):\n    return f'Classify the sentiment of this text as Positive or Negative: {text}'"
         },
         {
@@ -146,32 +182,46 @@
     }
 
     function submitCode() {
+        // Show the solution for the current task
         document.getElementById(`sol-${current}`).classList.add('show');
         document.getElementById('submit-code-btn').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'block';
-    }
-
-    function move(dir) {
-        document.getElementById(`task-${current}`).classList.remove('active');
-        current = Math.max(0, Math.min(tasks.length - 1, current + dir));
-        document.getElementById(`task-${current}`).classList.add('active');
         
-        document.getElementById('progress-text').textContent = `Task ${current + 1} of ${tasks.length}`;
-        document.getElementById('prev-btn').disabled = (current === 0);
-        document.getElementById('submit-code-btn').style.display = 'block';
-        document.getElementById('next-btn').style.display = 'none';
+        // Show "Next" or "Finish" depending on progress
+        document.getElementById('next-btn').style.display = 'block';
 
+        // Update the button text if it's the last task
         if (current === tasks.length - 1) {
             const nextBtn = document.getElementById('next-btn');
-            nextBtn.textContent = "Finish & Return";
+            nextBtn.textContent = "Finish & Return to Dashboard";
+            nextBtn.classList.remove('btn-primary');
+            nextBtn.classList.add('btn-success');
+            
+            // Set final completion logic
             nextBtn.onclick = () => {
-                localStorage.setItem('basics_assign_completed', 'true');
+                localStorage.setItem('basics_module_fully_completed', 'true');
                 window.location.href = '../index.html';
             };
         }
     }
 
-    window.onload = buildTasks;
+    function move(dir) {
+        // Hide current task
+        document.getElementById(`task-${current}`).classList.remove('active');
+        
+        // Update index
+        current = Math.max(0, Math.min(tasks.length - 1, current + dir));
+        
+        // Show new task
+        document.getElementById(`task-${current}`).classList.add('active');
+        
+        // UI Updates
+        document.getElementById('progress-text').textContent = `Task ${current + 1} of ${tasks.length}`;
+        document.getElementById('prev-btn').disabled = (current === 0);
+        
+        // Reset button visibility for new task
+        document.getElementById('submit-code-btn').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'none';
+    }
 </script>
 </body>
 </html>

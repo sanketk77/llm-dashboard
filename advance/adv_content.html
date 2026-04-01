@@ -24,16 +24,27 @@
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 260px;
-            background: var(--white);
-            border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-        }
+        .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
 
         .main-content {
             flex: 1;
@@ -125,7 +136,11 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+   <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
     <div style="margin-top: 3rem;">
         <p class="subtitle" style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-sub);">Current Level</p>
         <p style="color: var(--primary); font-weight: 500;">3. LLM Advanced</p>
@@ -154,15 +169,14 @@
         </div>
     </div>
 
+    <!-- PDF SECTION -->
     <div id="ppt-content" class="content-area">
         <div class="card">
-            <h3 style="margin-bottom:15px;">📄 Technical Engineering Slides</h3>
-            <div class="pdf-container">
-                <embed src="LLM Advanced P1+P2.pptx.pdf" type="application/pdf" width="100%" height="100%">
-            </div>
-            <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-sub);">
-                Review guardrails, evaluation frameworks (RAGAs), and deployment patterns[cite: 796, 802, 1082].
-            </p>
+            <h3>Technical Slides</h3>
+
+            <!-- 🔥 PASTE YOUR PDF URL BELOW -->
+            <iframe src="https://res.cloudinary.com/dj3shi5ju/raw/upload/v1774954379/llm_mastery/totw9qgb19nu1inry4aj.pdf"></iframe>
+
         </div>
     </div>
 
@@ -173,6 +187,17 @@
 </div>
 
 <script>
+    // 1. GATEKEEPER: Ensure the Advanced Pre-Assessment was completed first
+    window.onload = function() {
+        const preDone = localStorage.getItem('adv_pre_completed');
+        if (!preDone) {
+            alert("Please complete the Advanced Pre-Assessment before accessing these materials.");
+            window.location.href = "adv_pre_assessment.html";
+            return;
+        }
+    };
+
+    // 2. Tab Switching Logic
     function switchMode(mode, btn) {
         document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -182,11 +207,15 @@
         if (target) target.classList.add('active');
     }
 
+    // 3. Completion Tracking
     function markComplete() {
-        // Sets the storage key to unlock the Advanced Post-Assessment on index.html
-        localStorage.setItem('adv_pre_completed', 'true'); 
+        // Set the storage key to unlock the Advanced Post-Assessment (Quiz)
+        localStorage.setItem('adv_content_completed', 'true'); 
+        
         alert("Advanced content reviewed! You have unlocked the Engineering Final Quiz.");
-        window.location.href = '../index.html';
+        
+        // Navigate to the Advanced Post-Assessment
+        window.location.href = 'adv_post_assessment.html';
     }
 </script>
 

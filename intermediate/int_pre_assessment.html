@@ -125,7 +125,7 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">JADE GLOBAL AI</div>
+    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">Jade Global</div>
     <div style="margin-top: 2rem;">
         <div class="subtitle" style="font-size: 0.8rem; text-transform: uppercase;">Time Elapsed</div>
         <div id="qtimer" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">00:00</div>
@@ -309,20 +309,22 @@ exp:"Embeddings convert text into vectors, enabling semantic similarity search."
 }
 ];
 
-let current=0, answered={}, submitted=false, startTime=Date.now(), timerInt;
+let current = 0, answered = {}, submitted = false;
+let timeLeft = 20 * 60; // 20 minutes in seconds
+let timerInt;
 
 function buildQuestions(){
-    const c=document.getElementById('questions-container');
-    QS.forEach((q,i)=>{
-        const d=document.createElement('div');
-        d.className='qcard'+(i===0?' active':'');
-        d.id='q'+i;
-        d.innerHTML=`
+    const c = document.getElementById('questions-container');
+    QS.forEach((q, i) => {
+        const d = document.createElement('div');
+        d.className = 'qcard' + (i === 0 ? ' active' : '');
+        d.id = 'q' + i;
+        d.innerHTML = `
             <div class="topic-label">${q.topic}</div>
             <div class="qnum">Step ${i+1} of ${QS.length}</div>
             <div class="qtext">${q.q}</div>
             <div class="options" id="opts${i}">
-                ${q.opts.map((o,j)=>`
+                ${q.opts.map((o, j) => `
                     <div class="opt" id="opt${i}_${j}" onclick="selectOpt(${i},${j})">
                         <div class="olabel">${String.fromCharCode(65+j)}</div>
                         <div class="otext">${o}</div>
@@ -332,61 +334,73 @@ function buildQuestions(){
     });
 }
 
-function selectOpt(qi,oi){
+function selectOpt(qi, oi){
     if(submitted) return;
-    answered[qi]=oi;
-    document.querySelectorAll(`#opts${qi} .opt`).forEach((el,j)=> el.classList.toggle('selected', j===oi));
+    answered[qi] = oi;
+    document.querySelectorAll(`#opts${qi} .opt`).forEach((el, j) => el.classList.toggle('selected', j === oi));
     document.getElementById('ans-num').textContent = `${Object.keys(answered).length} / ${QS.length}`;
-    document.getElementById('prog').style.width = Math.round((Object.keys(answered).length/QS.length)*100)+'%';
-    if(Object.keys(answered).length >= 15) document.getElementById('submit-row').style.display='block';
+    document.getElementById('prog').style.width = Math.round((Object.keys(answered).length / QS.length) * 100) + '%';
+    
+    // Show submit row once at least 15 questions are answered
+    if(Object.keys(answered).length >= 15) document.getElementById('submit-row').style.display = 'block';
 }
 
 function nav(dir){
-    document.getElementById('q'+current).classList.remove('active');
-    current = Math.max(0, Math.min(QS.length-1, current+dir));
-    document.getElementById('q'+current).classList.add('active');
-    document.getElementById('prev-btn').disabled = (current===0);
-    document.getElementById('next-btn').disabled = (current===QS.length-1);
+    document.getElementById('q' + current).classList.remove('active');
+    current = Math.max(0, Math.min(QS.length - 1, current + dir));
+    document.getElementById('q' + current).classList.add('active');
+    document.getElementById('prev-btn').disabled = (current === 0);
+    document.getElementById('next-btn').disabled = (current === QS.length - 1);
 }
 
 function submitAssessment(){
-    submitted=true; clearInterval(timerInt);
-    localStorage.setItem('basics_pre_completed', 'true');
+    if(submitted) return;
+    submitted = true; 
+    clearInterval(timerInt);
+    
+    // UNLOCK: Mark intermediate pre-assessment as complete
+    localStorage.setItem('int_pre_completed', 'true');
     showResults();
 }
 
 function showResults(){
-    document.getElementById('quiz-ui').style.display='none';
-    const r=document.getElementById('results'); r.style.display='block';
-    let correct=0; QS.forEach((q,i)=> { if(answered[i]===q.ans) correct++; });
-    const pct=Math.round((correct/QS.length)*100);
+    document.getElementById('quiz-ui').style.display = 'none';
+    const r = document.getElementById('results'); 
+    r.style.display = 'block';
+    
+    let correct = 0; 
+    QS.forEach((q, i) => { if(answered[i] === q.ans) correct++; });
+    const pct = Math.round((correct / QS.length) * 100);
+
+    // Calculate time taken
+    const timeSpentSec = (20 * 60) - timeLeft;
+    const m = Math.floor(timeSpentSec / 60), s = timeSpentSec % 60;
 
     r.innerHTML = `
         <div class="results-header">
-            <h2 style="margin-bottom:10px">Assessment Complete</h2>
+            <h2 style="margin-bottom:10px">Pre-Assessment Complete</h2>
             <div class="score-big">${pct}%</div>
-            <p class="subtitle">Great start! You've set your baseline.</p>
+            <p class="subtitle">Baseline set. Intermediate content is now unlocked.</p>
         </div>
         <div class="result-grid">
             <div class="stat-card"><div style="font-size:24px; font-weight:bold">${correct}</div><div class="subtitle">Correct</div></div>
-            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${QS.length-correct}</div><div class="subtitle">Incorrect</div></div>
-            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${document.getElementById('qtimer').textContent}</div><div class="subtitle">Duration</div></div>
+            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${QS.length - correct}</div><div class="subtitle">Incorrect</div></div>
+            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${m}:${s < 10 ? '0' : ''}${s}</div><div class="subtitle">Duration</div></div>
         </div>
 
         <div class="action-buttons">
-            <button class="btn-submit" onclick="window.location.href='index.html'" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Return to Dashboard</button>
-            <button class="btn-submit" onclick="window.location.href='content.html'">Go to Learning Content</button>
+            <button class="btn-submit" onclick="window.location.href='int_content.html'">Go to Learning Content →</button>
         </div>
 
-        <h3 style="margin-top: 40px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Detailed Review</h3>
-        ${QS.map((q,i)=>{
-            const ua=answered[i]; const ok=ua===q.ans;
+        <h3 style="margin-top: 40px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Review</h3>
+        ${QS.map((q, i) => {
+            const ua = answered[i]; const ok = ua === q.ans;
             return `
-            <div class="review-card ${ok?'correct':'incorrect'}">
-                <div class="qnum">Question ${i+1}</div>
+            <div class="review-card ${ok ? 'correct' : 'incorrect'}">
+                <div class="qnum">Question ${i + 1}</div>
                 <div style="font-weight:bold; margin-bottom:10px">${q.q}</div>
-                <div style="font-size:0.9rem">Your Answer: ${ua!==undefined?q.opts[ua]:'None'}</div>
-                ${!ok?`<div style="font-size:0.9rem; color:var(--success); font-weight:bold">Correct: ${q.opts[q.ans]}</div>`:''}
+                <div style="font-size:0.9rem">Your Answer: ${ua !== undefined ? q.opts[ua] : 'None'}</div>
+                ${!ok ? `<div style="font-size:0.9rem; color:var(--success); font-weight:bold">Correct: ${q.opts[q.ans]}</div>` : ''}
                 <div class="exp-box">${q.exp}</div>
             </div>`;
         }).join('')}
@@ -394,14 +408,24 @@ function showResults(){
 }
 
 function startTimer(){
-    timerInt=setInterval(()=>{
-        const e=Math.round((Date.now()-startTime)/1000);
-        const m=Math.floor(e/60), s=e%60;
-        document.getElementById('qtimer').textContent=`${m}:${s<10?'0':''}${s}`;
-    },1000);
+    timerInt = setInterval(() => {
+        timeLeft--;
+        const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+        const display = document.getElementById('qtimer');
+        display.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        
+        if(timeLeft <= 60) display.style.color = "var(--error)";
+        
+        if(timeLeft <= 0) {
+            clearInterval(timerInt);
+            alert("Time's up! Submitting your answers.");
+            submitAssessment();
+        }
+    }, 1000);
 }
 
 window.onload = function(){ buildQuestions(); startTimer(); }
 </script>
 </body>
 </html>
+
