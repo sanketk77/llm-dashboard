@@ -26,26 +26,26 @@
         }
 
         .sidebar-header {
-    padding: 20px;
-    display: flex;
-    justify-content: center; /* Centers the logo horizontally */
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 20px;
-}
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
 
-.sidebar-logo {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+        .sidebar-logo {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-.logo-img {
-    width: 180px;      /* Adjust this width based on your PNG's dimensions */
-    height: auto;      /* Maintains aspect ratio */
-    display: block;
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
-}
+        .logo-img {
+            width: 180px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
+        }
 
         .main-content {
             flex: 1;
@@ -96,6 +96,12 @@
             border-radius: 16px;
             padding: 1.5rem;
             border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
         }
 
         video {
@@ -106,6 +112,16 @@
         .pdf-container {
             width: 100%;
             height: 700px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pdf-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
         .footer-nav {
@@ -119,17 +135,24 @@
             border-radius: 6px;
             text-decoration: none;
             cursor: pointer;
+            border: none;
+            font-size: 14px;
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
-            border: none;
         }
 
         .btn-outline {
             border: 1px solid var(--border);
             background: white;
+            color: var(--text-main);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -191,12 +214,15 @@
     <div id="ppt-content" class="content-area">
         <div class="card">
             <h3>Technical Slides</h3>
-
-            <!-- 🔥 PASTE YOUR PDF URL BELOW -->
-            <iframe src="https://res.cloudinary.com/dj3shi5ju/raw/upload/v1774954261/llm_mastery/kbaupewpqii8wvzgszwr.pdf"></iframe>
-
+            <div class="pdf-container">
+                <iframe 
+                    src="https://raw.githubusercontent.com/sanketk77/llm-dashboard/blob/main/basics/LLM_BASIC_Content.pdf.pdf"
+                    title="Technical Slides PDF">
+                </iframe>
+            </div>
         </div>
     </div>
+
     <!-- FOOTER -->
     <div class="footer-nav">
         <a href="../index.html" class="btn btn-outline">Back</a>
@@ -207,13 +233,13 @@
 
 <script>
 // GATEKEEPER: Prevent access if Pre-Assessment isn't done
-window.onload = function() {
-    const preCompleted = localStorage.getItem('basics_pre_completed');
-    if (!preCompleted) {
-        alert("Please complete the Pre-Assessment first!");
-        window.location.href = "pre_assessment.html";
-    }
-};
+// window.onload = function() {
+//     const preCompleted = localStorage.getItem('basics_pre_completed');
+//     if (!preCompleted) {
+//         alert("Please complete the Pre-Assessment first!");
+//         window.location.href = "pre_assessment.html";
+//     }
+// };
 
 function switchMode(mode, btn) {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));

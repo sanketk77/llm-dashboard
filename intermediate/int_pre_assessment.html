@@ -28,18 +28,27 @@
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 260px;
-            background: var(--white);
-            border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            position: fixed;
-            height: 100vh;
-        }
+       .sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centers the logo horizontally */
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
 
+.sidebar-logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 180px;      /* Adjust this width based on your PNG's dimensions */
+    height: auto;      /* Maintains aspect ratio */
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
+}
         .main-content {
             flex: 1;
             padding: 3rem;
@@ -125,7 +134,11 @@
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">Jade Global</div>
+    <div class="sidebar-header">
+    <div class="sidebar-logo">
+        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+    </div>
+</div>
     <div style="margin-top: 2rem;">
         <div class="subtitle" style="font-size: 0.8rem; text-transform: uppercase;">Time Elapsed</div>
         <div id="qtimer" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">00:00</div>
