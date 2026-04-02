@@ -109,12 +109,15 @@
             border-radius: 12px;
         }
 
+        /* LARGE PDF CONTAINER */
         .pdf-container {
             width: 100%;
-            height: 700px;
-            border: 1px solid var(--border);
+            height: 1200px;
+            border: 2px solid var(--border);
             border-radius: 8px;
             overflow: hidden;
+            background: #fff;
+            position: relative;
         }
 
         .pdf-container iframe {
@@ -122,6 +125,15 @@
             height: 100%;
             border: none;
             display: block;
+        }
+
+        .pdf-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-sub);
+            font-size: 16px;
         }
 
         .footer-nav {
@@ -210,18 +222,13 @@
         </div>
     </div>
 
-    <!-- PDF SECTION -->
-    <div id="ppt-content" class="content-area">
-        <div class="card">
-            <h3>Technical Slides</h3>
-            <div class="pdf-container">
-                <iframe 
-                    src="https://raw.githubusercontent.com/sanketk77/llm-dashboard/blob/main/basics/LLM_BASIC_Content.pdf.pdf"
-                    title="Technical Slides PDF">
-                </iframe>
-            </div>
-        </div>
-    </div>
+    <!-- PDF SECTION - LARGE CONTAINER -->
+   <div class="pdf-container">
+    <iframe 
+        src="https://drive.google.com/file/d/1g6UAeAvDuP4jirulsl1ZaIJ_4geJH17r/view?usp=drive_link"
+        title="Technical Slides PDF">
+    </iframe>
+</div>
 
     <!-- FOOTER -->
     <div class="footer-nav">
@@ -233,13 +240,30 @@
 
 <script>
 // GATEKEEPER: Prevent access if Pre-Assessment isn't done
-// window.onload = function() {
-//     const preCompleted = localStorage.getItem('basics_pre_completed');
-//     if (!preCompleted) {
-//         alert("Please complete the Pre-Assessment first!");
-//         window.location.href = "pre_assessment.html";
-//     }
-// };
+window.onload = function() {
+    const preCompleted = localStorage.getItem('basics_pre_completed');
+    if (!preCompleted) {
+        alert("Please complete the Pre-Assessment first!");
+        window.location.href = "pre_assessment.html";
+    }
+
+    // Wait for iframe to load, then hide loading message
+    const iframe = document.getElementById('pdf-iframe');
+    iframe.onload = function() {
+        const loader = document.querySelector('.pdf-loading');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    };
+
+    // Fallback: hide loader after 3 seconds
+    setTimeout(() => {
+        const loader = document.querySelector('.pdf-loading');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }, 3000);
+};
 
 function switchMode(mode, btn) {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
