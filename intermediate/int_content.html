@@ -181,16 +181,14 @@
         </div>
     </div>
 
-    <!-- PDF SECTION -->
-    <div id="ppt-content" class="content-area">
-        <div class="card">
-            <h3>Technical Slides</h3>
-
-            <!-- 🔥 PASTE YOUR PDF URL BELOW -->
-            <iframe src="https://res.cloudinary.com/dj3shi5ju/raw/upload/v1774953208/llm_mastery/pllhgej8nie15d4qubt1.pdf"></iframe>
-
-        </div>
-    </div>
+    
+     <!-- PDF SECTION - LARGE CONTAINER -->
+   <div class="pdf-container">
+    <iframe 
+        src="https://drive.google.com/file/d/1j5r7973it0ok3G3dRNHMw6BcGpK1sGdw/view?usp=sharing"
+        title="Technical Slides PDF">
+    </iframe>
+</div>
     <div class="footer-nav">
         <a href="int_pre_assessment.html" class="btn btn-outline">Review Pre-Assessment</a>
         <button onclick="markComplete()" class="btn btn-primary">Mark as Completed</button>
@@ -199,14 +197,14 @@
 
 <script>
     // 1. GATEKEEPER: Ensure the Intermediate Pre-Assessment was completed first
-    window.onload = function() {
-        const preDone = localStorage.getItem('int_pre_completed');
-        if (!preDone) {
-            alert("Please complete the Intermediate Pre-Assessment before accessing the learning materials.");
-            window.location.href = "int_pre_assessment.html";
-            return;
-        }
-    };
+    // window.onload = function() {
+    //     const preDone = localStorage.getItem('int_pre_completed');
+    //     if (!preDone) {
+    //         alert("Please complete the Intermediate Pre-Assessment before accessing the learning materials.");
+    //         window.location.href = "int_pre_assessment.html";
+    //         return;
+    //     }
+    // };
 
     // 2. Tab Switching Logic
     function switchMode(mode, btn) {
