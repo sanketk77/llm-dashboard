@@ -9,8 +9,12 @@
     <style>
         :root {
             --primary: #1a73e8;
-            --success: #2e7d32;
-            --error: #c62828;
+            --primary-light: #e8f0fe;
+            --primary-dark: #1557b0;
+            --success: #1e8e3e;
+            --success-light: #f1f8e9;
+            --error: #d32f2f;
+            --error-light: #ffebee;
             --bg: #f8f9fa;
             --bg-light: #ffffff;
             --text-main: #202124;
@@ -19,10 +23,6 @@
             --border: #dadce0;
             --shadow: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            --primary-light: #e8f0fe;
-            --primary-dark: #1557b0;
-            --success-light: #e6f4ea;
-            --error-light: #fce8e6;
         }
 
         * { 
@@ -220,6 +220,13 @@
         /* ===== PROGRESS BAR ===== */
         .progress-container {
             margin-bottom: 40px;
+            position: sticky;
+            top: 0;
+            background: rgba(248, 249, 250, 0.95);
+            padding: 20px 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
         }
 
         .progress-info {
@@ -279,16 +286,12 @@
             border-radius: 16px;
             padding: 32px;
             box-shadow: var(--shadow);
-            display: none;
             border: 1px solid var(--border);
-            min-height: 500px;
+            display: flex;
             flex-direction: column;
             justify-content: space-between;
+            margin-bottom: 32px; /* Added spacing between cards for scroll layout */
             animation: fadeIn 0.4s ease;
-        }
-
-        .qcard.active {
-            display: flex;
         }
 
         .qcard-header {
@@ -409,26 +412,26 @@
         .nav-controls {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 16px;
-            margin-top: 32px;
-            padding-top: 24px;
+            margin-top: 40px;
+            margin-bottom: 60px;
+            padding-top: 32px;
             border-top: 1px solid var(--border);
         }
 
         button {
-            padding: 12px 28px;
+            padding: 16px 40px;
             border-radius: 8px;
             border: 2px solid var(--border);
             background: var(--bg-light);
             cursor: pointer;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 8px;
-            min-height: 44px;
             color: var(--text-main);
         }
 
@@ -455,15 +458,27 @@
             border: none;
             box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
             font-weight: 700;
+            width: 100%;
+            max-width: 400px;
+            justify-content: center;
         }
 
-        .btn-submit:hover {
+        .btn-submit:hover:not(:disabled) {
             box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
             transform: translateY(-2px);
+            color: white;
         }
 
-        #submit-row {
-            display: none;
+        .btn-outline {
+            background: var(--bg-light);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
         }
 
         /* ===== RESULTS ===== */
@@ -549,23 +564,6 @@
             gap: 16px;
             margin: 40px 0;
             flex-wrap: wrap;
-        }
-
-        .action-buttons .btn-submit {
-            padding: 14px 32px;
-            font-size: 15px;
-        }
-
-        .btn-outline {
-            background: var(--bg-light);
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            box-shadow: none;
-        }
-
-        .btn-outline:hover {
-            background: var(--primary-light);
-            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
         }
 
         .review-section {
@@ -654,26 +652,18 @@
             .sidebar { width: 260px; }
             .main-content { margin-left: 260px; padding: 30px; }
             .header h1 { font-size: 28px; }
-            .qcard { padding: 24px; min-height: 450px; }
+            .qcard { padding: 24px; }
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-            }
+            .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
             .sidebar-content { flex-direction: row; gap: 20px; }
             .main-content { margin-left: 0; padding: 20px; max-width: 100%; }
             .header h1 { font-size: 24px; }
-            .qcard { padding: 20px; min-height: auto; }
-            .nav-controls { flex-direction: column; gap: 12px; }
-            button { width: 100%; justify-content: center; }
+            .qcard { padding: 20px; }
             .result-grid { grid-template-columns: 1fr; }
             .action-buttons { flex-direction: column; }
-            .action-buttons .btn-submit { width: 100%; }
+            .btn-submit { max-width: 100%; }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -688,7 +678,8 @@
 <div class="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-logo">
-            <img src="jade_logo.webp" alt="Jade Global Logo" class="logo-img">
+            <img src="jade_logo.webp" alt="Jade Global Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display:none; font-weight: 800; color: var(--primary); font-size: 1.2rem; letter-spacing: -0.5px;">JADE GLOBAL</div>
         </div>
     </div>
 
@@ -730,11 +721,7 @@
         <div id="questions-container"></div>
 
         <div class="nav-controls">
-            <button id="prev-btn" onclick="nav(-1)" disabled>← Previous</button>
-            <div id="submit-row">
-                <button class="btn-submit" onclick="submitAssessment()">Submit Final Quiz →</button>
-            </div>
-            <button id="next-btn" onclick="nav(1)">Next →</button>
+            <button id="submit-btn" class="btn-submit" onclick="submitAssessment()" disabled>Complete All Questions to Submit</button>
         </div>
     </div>
 
@@ -743,13 +730,16 @@
 
 <script>
 // 1. GATEKEEPER: Ensure Advanced Content was reviewed first
+// (Commented out for local testing. Uncomment in production.)
 window.onload = function() {
+    /*
     const contentDone = localStorage.getItem('adv_content_completed');
     if (!contentDone) {
         alert("Please review the Advanced Learning Materials before taking the Post-Assessment.");
         window.location.href = "adv_content.html";
         return;
     }
+    */
     buildQuestions();
     startTimer();
 };
@@ -897,7 +887,6 @@ const QS = [
     }
 ];
 
-let current = 0;
 let answered = {};
 let submitted = false;
 let timeLeft = 20 * 60;
@@ -909,7 +898,8 @@ function buildQuestions() {
 
     QS.forEach((q, i) => {
         const d = document.createElement('div');
-        d.className = 'qcard' + (i === 0 ? ' active' : '');
+        // Render all blocks linearly without standard 'active' toggling
+        d.className = 'qcard';
         d.id = 'q' + i;
         d.innerHTML = `
             <div class="qcard-header">
@@ -942,28 +932,30 @@ function selectOpt(qi, oi) {
     document.getElementById('prog').style.width = progPct + '%';
     document.getElementById('prog-text').textContent = progPct + '%';
     
-    // Require ALL questions to be answered for the final quiz
-    if (answeredCount >= QS.length) {
-        document.getElementById('submit-row').style.display = 'block';
+    // Enable the single Submit button when all questions are answered
+    if (answeredCount === QS.length) {
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Final Quiz →';
     }
-}
-
-function nav(dir) {
-    document.getElementById('q' + current).classList.remove('active');
-    current = Math.max(0, Math.min(QS.length - 1, current + dir));
-    document.getElementById('q' + current).classList.add('active');
-    document.getElementById('prev-btn').disabled = (current === 0);
-    document.getElementById('next-btn').disabled = (current === QS.length - 1);
 }
 
 function submitAssessment() {
     if(submitted) return;
+    
+    // Optional failsafe check
+    if (Object.keys(answered).length < QS.length) {
+        alert("Please answer all questions before submitting.");
+        return;
+    }
+
     submitted = true;
     clearInterval(timerInt);
     
-    // UNLOCK: Mark advanced post-assessment as complete to unlock assignment
+    // UNLOCK: Mark advanced post-assessment as complete
     localStorage.setItem('adv_post_completed', 'true');
     showResults();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top for results
 }
 
 function showResults() {
@@ -992,7 +984,7 @@ function showResults() {
                 <div class="stat-label">Correct</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">${QS.length - correct}</div>
+                <div class="stat-value" style="color:var(--error)">${QS.length - correct}</div>
                 <div class="stat-label">Incorrect</div>
             </div>
             <div class="stat-card">
@@ -1045,6 +1037,14 @@ function startTimer() {
         if (timeLeft <= 0) {
             clearInterval(timerInt);
             alert("⏱ Time is up! Submitting your answers...");
+            // Force submit even if incomplete
+            const answeredCount = Object.keys(answered).length;
+            if(answeredCount < QS.length) {
+                // mock filling answers so submission processes gracefully
+                for(let i=0; i<QS.length; i++) {
+                   if(answered[i] === undefined) answered[i] = -1; 
+                }
+            }
             submitAssessment();
         }
     }, 1000);

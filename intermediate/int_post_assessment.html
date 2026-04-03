@@ -1006,16 +1006,16 @@ let submitted = false;
 let timeLeft = 20 * 60;
 let timerInt;
 
-window.onload = function() {
-    const contentDone = localStorage.getItem('int_content_completed');
-    if (!contentDone) {
-        alert("Please complete the Intermediate Learning Materials before taking the Post-Assessment.");
-        window.location.href = "int_content.html";
-        return;
-    }
-    buildQuestions();
-    startTimer();
-};
+// window.onload = function() {
+//     const contentDone = localStorage.getItem('int_content_completed');
+//     if (!contentDone) {
+//         alert("Please complete the Intermediate Learning Materials before taking the Post-Assessment.");
+//         window.location.href = "int_content.html";
+//         return;
+//     }
+//     buildQuestions();
+//     startTimer();
+// };
 
 function buildQuestions() {
     const c = document.getElementById('questions-container');

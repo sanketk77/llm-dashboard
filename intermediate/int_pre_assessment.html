@@ -9,8 +9,12 @@
     <style>
         :root {
             --primary: #1a73e8;
-            --success: #2e7d32;
-            --error: #c62828;
+            --primary-light: #e8f0fe;
+            --primary-dark: #1557b0;
+            --success: #1e8e3e;
+            --success-light: #f1f8e9;
+            --error: #d32f2f;
+            --error-light: #ffebee;
             --bg: #f8f9fa;
             --bg-light: #ffffff;
             --text-main: #202124;
@@ -625,118 +629,41 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 260px;
-            }
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .qcard {
-                padding: 24px;
-                min-height: 450px;
-            }
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; padding: 30px; }
+            .header h1 { font-size: 28px; }
+            .qcard { padding: 24px; min-height: 450px; }
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .sidebar-content {
-                flex-direction: row;
-                gap: 20px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-                max-width: 100%;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .qcard {
-                padding: 20px;
-                min-height: auto;
-            }
-
-            .nav-controls {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .action-buttons .btn-submit {
-                width: 100%;
-            }
+            .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+            .sidebar-content { flex-direction: row; gap: 20px; }
+            .main-content { margin-left: 0; padding: 20px; max-width: 100%; }
+            .header h1 { font-size: 24px; }
+            .qcard { padding: 20px; min-height: auto; }
+            .nav-controls { flex-direction: column; gap: 12px; }
+            button { width: 100%; justify-content: center; }
+            .result-grid { grid-template-columns: 1fr; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn-submit { width: 100%; }
         }
 
         /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
     </style>
 </head>
 <body>
@@ -760,7 +687,7 @@
         </div>
 
         <nav class="sidebar-nav" style="margin-top: auto;">
-            <a href="index.html">← Exit Assessment</a>
+            <a href="../index.html">← Exit Assessment</a>
         </nav>
     </div>
 </div>

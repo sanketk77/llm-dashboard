@@ -5,7 +5,7 @@
     <script src="APIWrapper.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Basic — Pre-Assessment</title>
+    <title>LLM Intermediate — Pre-Assessment</title>
     <style>
         :root {
             --primary: #1a73e8;
@@ -629,118 +629,41 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 260px;
-            }
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .qcard {
-                padding: 24px;
-                min-height: 450px;
-            }
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; padding: 30px; }
+            .header h1 { font-size: 28px; }
+            .qcard { padding: 24px; min-height: 450px; }
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .sidebar-content {
-                flex-direction: row;
-                gap: 20px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-                max-width: 100%;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .qcard {
-                padding: 20px;
-                min-height: auto;
-            }
-
-            .nav-controls {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .action-buttons .btn-submit {
-                width: 100%;
-            }
+            .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+            .sidebar-content { flex-direction: row; gap: 20px; }
+            .main-content { margin-left: 0; padding: 20px; max-width: 100%; }
+            .header h1 { font-size: 24px; }
+            .qcard { padding: 20px; min-height: auto; }
+            .nav-controls { flex-direction: column; gap: 12px; }
+            button { width: 100%; justify-content: center; }
+            .result-grid { grid-template-columns: 1fr; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn-submit { width: 100%; }
         }
 
         /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
     </style>
 </head>
 <body>
@@ -764,7 +687,7 @@
         </div>
 
         <nav class="sidebar-nav" style="margin-top: auto;">
-            <a href="../index.html">← Exit to Dashboard</a>
+            <a href="../index.html">← Exit Assessment</a>
         </nav>
     </div>
 </div>
@@ -772,9 +695,9 @@
 <div class="main-content">
     <div id="quiz-ui">
         <div class="header">
-            <div class="badge">Module 1-3: Basics</div>
-            <h1>Pre-Assessment</h1>
-            <p>This diagnostic helps us understand your starting point. Answer naturally based on what you know now.</p>
+            <div class="badge">📝 Assessment</div>
+            <h1>Intermediate Pre-Assessment</h1>
+            <p>Test your understanding of advanced LLM concepts. Answer based on what you know now.</p>
         </div>
 
         <div class="progress-container">
@@ -804,144 +727,144 @@
 <script>
 const QS = [
     {
-        topic:"Introduction to AI", tc:"t-ai",
-        q:"What is Artificial Intelligence (AI) primarily designed to do?",
-        opts:["Replace human physical labor completely","Make machines think and learn from data like humans","Operate only when connected to a printer","Fix broken computer hardware automatically"],
+        topic:"Prompting", tc:"t-prompt",
+        q:"You ask an LLM: 'Write about AI.' The output is too vague. What is the best improvement?",
+        opts:["Increase temperature","Add specific instructions and output format","Use a different model","Remove context"],
         ans:1,
-        exp:"AI mimics human intelligence by understanding information, learning from data, and making predictions[cite: 437, 443]."
+        exp:"Vague prompts lead to vague outputs. Adding clear instructions and format improves response quality significantly."
     },
     {
-        topic:"Introduction to AI", tc:"t-ai",
-        q:"Which of these is a real-world example of 'Narrow AI' used daily?",
-        opts:["A standard wall clock","Voice assistants like Siri or Alexa","A manual bicycle","A theoretical machine with emotions"],
+        topic:"Prompting", tc:"t-prompt",
+        q:"You want the model to classify sentiment accurately for tricky cases. What should you use?",
+        opts:["Zero-shot prompting","Few-shot prompting","High temperature","Short prompts"],
         ans:1,
-        exp:"Narrow AI (ANI) is designed for specific tasks like voice recognition or spam filtering[cite: 477, 481]."
+        exp:"Few-shot prompting provides examples that help the model understand patterns in complex or nuanced tasks."
     },
     {
-        topic:"NLP Fundamentals", tc:"t-nlp",
-        q:"In NLP, what is the process of breaking text into smaller units (tokens)?",
-        opts:["Slicing","Tokenization","Sorting","Grouping"],
+        topic:"Prompting", tc:"t-prompt",
+        q:"A chatbot gives incorrect answers to math problems. What is the most effective fix?",
+        opts:["Reduce max tokens","Add 'Let's think step by step'","Increase temperature","Remove examples"],
         ans:1,
-        exp:"Tokenization is the first step in the NLP pipeline, breaking raw text into chunks a computer can process[cite: 569, 583]."
+        exp:"Chain-of-thought prompting improves reasoning by forcing the model to break down steps."
     },
     {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"What does 'LLM' stand for?",
-        opts:["Logical Learning Machine","Large Language Model","Linked Language Matrix","Long Linear Method"],
-        ans:1,
-        exp:"Large Language Models are trained on trillions of tokens to generate human-like text[cite: 662, 668]."
-    },
-    {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"Which model was released by Google in 2024?",
-        opts:["ChatGPT","Claude","Gemini","LLaMA"],
+        topic:"Prompting", tc:"t-prompt",
+        q:"You are building a legal assistant. Which prompt is better?",
+        opts:["Explain this contract","Summarize this contract","You are a legal expert. Summarize key risks in 3 bullet points.","Tell me about contracts"],
         ans:2,
-        exp:"Gemini is a multimodal model released by Google in 2024[cite: 52, 728]."
+        exp:"Role + clear instructions + format leads to more useful and domain-specific outputs."
     },
     {
-        topic:"LLM Applications", tc:"t-app",
-        q:"What is a major business use case for LLMs?",
-        opts:["Hardware cleaning","Summarizing long documents","Office temperature control","Physical mail sorting"],
+        topic:"Transformers", tc:"t-trans",
+        q:"An LLM fails to understand that 'it' refers to 'the dog' in a sentence. Which concept solves this?",
+        opts:["Tokenization","Attention mechanism","Output layer","Temperature"],
         ans:1,
-        exp:"LLMs excel at summarization, text generation, and question answering[cite: 159, 175]."
+        exp:"Attention helps models connect related words across a sentence, enabling better context understanding."
     },
     {
-        topic:"LLM Applications", tc:"t-app",
-        q:"Which industry uses LLMs for clinical note drafting?",
-        opts:["Healthcare","Retail","Construction","Manufacturing"],
+        topic:"Transformers", tc:"t-trans",
+        q:"Why is multi-head attention useful?",
+        opts:["It reduces model size","It processes tokens sequentially","It captures different relationships in parallel","It removes positional encoding"],
+        ans:2,
+        exp:"Different attention heads learn different relationships like grammar, meaning, and dependencies."
+    },
+    {
+        topic:"LLM Usage", tc:"t-app",
+        q:"You want an LLM to generate creative marketing slogans. What should you adjust?",
+        opts:["Increase temperature","Decrease temperature","Decrease max tokens","Add stop sequence"],
         ans:0,
-        exp:"Healthcare providers like Epic use LLMs to generate clinical notes and summarize patient records[cite: 206, 207]."
+        exp:"Higher temperature increases randomness and creativity in outputs."
     },
     {
-        topic:"Prompt Basics", tc:"t-prompt",
-        q:"What is a 'Prompt'?",
-        opts:["A hardware component","An instruction or question given to an LLM","A software bug","A database storage unit"],
+        topic:"LLM Usage", tc:"t-app",
+        q:"A user asks a chatbot multiple follow-up questions. What helps maintain context?",
+        opts:["Tokenization","Conversation history","Lower temperature","Output formatting"],
         ans:1,
-        exp:"A prompt is any input (instruction, context, or data) that tells an LLM what to do[cite: 265, 269]."
+        exp:"Maintaining conversation history allows the model to remember prior interactions."
     },
     {
-        topic:"Prompt Basics", tc:"t-prompt",
-        q:"What phrase dramatically improves an LLM's reasoning quality?",
-        opts:["'Be fast'","'Let's think step by step'","'Don't fail'","'Skip details'"],
+        topic:"Applications", tc:"t-app",
+        q:"Which task is best suited for LLMs?",
+        opts:["Sorting numbers efficiently","Writing product descriptions","Running database joins","Compressing files"],
         ans:1,
-        exp:"Adding 'Let's think step by step' triggers Chain of Thought (CoT) reasoning[cite: 308, 312]."
+        exp:"LLMs are designed for language-based tasks like writing, summarization, and QA."
     },
     {
-        topic:"Introduction to AI", tc:"t-ai",
-        q:"What is the relationship between AI and Machine Learning (ML)?",
-        opts:["They are the same thing","ML is a subset of AI","AI is a subset of ML","They are unrelated"],
+        topic:"Prompting", tc:"t-prompt",
+        q:"You want structured output like JSON. What should you do?",
+        opts:["Increase tokens","Specify output format in prompt","Use zero-shot prompting","Remove instructions"],
         ans:1,
-        exp:"Machine Learning is a subset of AI focused on learning patterns from data[cite: 460, 461]."
+        exp:"Explicitly defining output format ensures the model returns structured data."
     },
     {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"What is an LLM 'parameter'?",
-        opts:["A user prompt","An internal variable the model learns during training","A safety filter","A training dataset name"],
+        topic:"LLM Behavior", tc:"t-llm",
+        q:"A model gives different answers each time for the same factual query. What is the issue?",
+        opts:["Low max tokens","High temperature","Missing examples","Poor embeddings"],
         ans:1,
-        exp:"Parameters are internal weights the model learns; GPT-4 has roughly 1.8 trillion[cite: 675, 676]."
+        exp:"High temperature increases randomness, leading to inconsistent outputs."
     },
     {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"In what year was the 'Transformer' architecture introduced?",
-        opts:["1950","2012","2017","2022"],
+        topic:"Transformers", tc:"t-trans",
+        q:"You are building a translation system using a transformer. Which component generates output?",
+        opts:["Encoder","Decoder","Attention layer","Embedding layer"],
+        ans:1,
+        exp:"The decoder is responsible for generating output tokens step-by-step."
+    },
+    {
+        topic:"Prompting", tc:"t-prompt",
+        q:"You want the LLM to behave like a teacher who only asks questions. What should you use?",
+        opts:["Few-shot prompting","Role prompting","High temperature","Output parsing"],
+        ans:1,
+        exp:"Role prompting defines how the model should behave."
+    },
+    {
+        topic:"Prompting", tc:"t-prompt",
+        q:"A prompt says: 'Don't make it long.' What is the issue?",
+        opts:["Too specific","Negative instruction only","Too many examples","Too structured"],
+        ans:1,
+        exp:"Negative instructions are unclear. It's better to specify exact constraints."
+    },
+    {
+        topic:"Prompting", tc:"t-prompt",
+        q:"You want to break a complex task into steps like Extract → Analyze → Summarize. What technique is this?",
+        opts:["Chain-of-thought","Prompt chaining","Few-shot prompting","Zero-shot prompting"],
+        ans:1,
+        exp:"Prompt chaining breaks tasks into sequential steps for better results."
+    },
+    {
+        topic:"APIs", tc:"t-api",
+        q:"Your app calls an LLM API and gets inconsistent creative outputs. Which parameter should you tune?",
+        opts:["max_tokens","temperature","stop","role"],
+        ans:1,
+        exp:"Temperature controls randomness and creativity in outputs."
+    },
+    {
+        topic:"Applications", tc:"t-app",
+        q:"You are building a customer support bot. It forgets earlier conversation. What should you add?",
+        opts:["Few-shot examples","Conversation memory/history","Lower temperature","More tokens"],
+        ans:1,
+        exp:"Memory or conversation history helps retain context across interactions."
+    },
+    {
+        topic:"Intermediate Concept", tc:"t-int",
+        q:"You want an LLM to answer using your company documents instead of general knowledge. What concept is most relevant?",
+        opts:["Tokenization","Prompt engineering","External data retrieval (RAG-like idea)","Temperature tuning"],
         ans:2,
-        exp:"The paper 'Attention is All You Need' introduced Transformers in 2017[cite: 35, 517]."
+        exp:"RAG allows models to retrieve and use external documents for accurate answers."
     },
     {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"What is the 'secret sauce' that allows Transformers to process context better than older RNNs?",
-        opts:["Faster hard drives","Attention mechanism","Larger vocabularies","Shorter prompts"],
-        ans:1,
-        exp:"The attention mechanism allows the model to look at ALL words in a sentence to find relevance[cite: 49, 54]."
-    },
-    {
-        topic:"NLP Fundamentals", tc:"t-nlp",
-        q:"Which task involves detecting if a review is 'Positive' or 'Negative'?",
-        opts:["Translation","Summarization","Sentiment Analysis","Parsing"],
+        topic:"Prompting", tc:"t-prompt",
+        q:"You give multiple examples before asking a question. What are you doing?",
+        opts:["Zero-shot prompting","Chain-of-thought","Few-shot prompting","Role prompting"],
         ans:2,
-        exp:"Sentiment analysis is a core NLP task used to extract the emotional intent of text[cite: 194, 640]."
+        exp:"Few-shot prompting uses examples to guide model behavior."
     },
     {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"When an LLM confidently states factually incorrect info, it is called:",
-        opts:["A update","A hallucination","A logical skip","A speed boost"],
+        topic:"Intermediate Concept", tc:"t-int",
+        q:"You are building a semantic search system based on meaning. What concept will you most likely need?",
+        opts:["Positional encoding","Embeddings","Temperature","Stop tokens"],
         ans:1,
-        exp:"Hallucination is a primary limitation where LLMs generate false facts convincingly[cite: 760, 785]."
-    },
-    {
-        topic:"LLM Applications", tc:"t-app",
-        q:"What does 'Multimodal' mean for an LLM?",
-        opts:["It can speak many languages","It can process text, images, and audio","It runs on multiple servers","It has multiple user accounts"],
-        ans:1,
-        exp:"Multimodal models like Gemini can see, hear, and reason across different data types[cite: 238, 243]."
-    },
-    {
-        topic:"Prompt Basics", tc:"t-prompt",
-        q:"Which prompting strategy uses 2-5 examples to teach a pattern?",
-        opts:["Zero-shot","Few-shot","Instant-shot","Multi-shot"],
-        ans:1,
-        exp:"Few-shot prompting provides examples before the task to improve results for nuanced patterns[cite: 298, 299]."
-    },
-    {
-        topic:"Introduction to AI", tc:"t-ai",
-        q:"Which type of AI is designed for one specific task (like chess)?",
-        opts:["General AI","Super AI","Narrow AI","Universal AI"],
-        ans:2,
-        exp:"Narrow AI (ANI) is designed for specific tasks and is the type of AI we use today[cite: 477, 479]."
-    },
-    {
-        topic:"NLP Fundamentals", tc:"t-nlp",
-        q:"GPT uses vectors (numbers) to represent words. This is called:",
-        opts:["Alphabetizing","Embeddings","Dictionary mapping","Hardcoding"],
-        ans:1,
-        exp:"Embeddings turn words into numerical vectors that capture their semantic meaning[cite: 615, 618]."
-    },
-    {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"Which organization developed LLaMA 3?",
-        opts:["OpenAI","Google","Meta","Anthropic"],
-        ans:2,
-        exp:"LLaMA 3 is an open-source model developed by Meta[cite: 734, 735]."
+        exp:"Embeddings convert text into vectors, enabling semantic similarity search."
     }
 ];
 
@@ -1005,7 +928,7 @@ function submitAssessment() {
     if(submitted) return;
     submitted = true;
     clearInterval(timerInt);
-    localStorage.setItem('basics_pre_completed', 'true');
+    localStorage.setItem('int_pre_completed', 'true');
     showResults();
 }
 
@@ -1026,7 +949,7 @@ function showResults() {
         <div class="results-header">
             <h2>🎉 Pre-Assessment Complete</h2>
             <div class="score-big">${pct}%</div>
-            <p class="results-subtitle">Your baseline is set. Learning content is now unlocked.</p>
+            <p class="results-subtitle">Baseline set. Intermediate learning content is now unlocked.</p>
         </div>
 
         <div class="result-grid">
@@ -1045,7 +968,7 @@ function showResults() {
         </div>
 
         <div class="action-buttons">
-            <button class="btn-submit" onclick="window.location.href='llm_fundamentals.html'">📚 Go to Learning Content →</button>
+            <button class="btn-submit" onclick="window.location.href='int_content.html'">📚 Go to Learning Content →</button>
         </div>
 
         <div class="review-section">

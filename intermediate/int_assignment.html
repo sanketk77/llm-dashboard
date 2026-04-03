@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Intermediate — Coding Assignment</title>
     
-    <!-- CodeMirror for Code Editor -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
@@ -280,7 +279,7 @@
             color: #666 !important;
         }
 
-        /* ===== STATUS MESSAGES ===== */
+        /* ===== ERROR/SUCCESS MESSAGES ===== */
         .editor-status {
             display: flex;
             align-items: center;
@@ -351,6 +350,13 @@
             overflow-x: auto;
             white-space: pre-wrap;
             word-wrap: break-word;
+        }
+
+        .solution-explanation {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #0d652d;
+            line-height: 1.6;
         }
 
         /* ===== IDE BUTTONS ===== */
@@ -460,118 +466,44 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 260px;
-            }
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; padding: 30px; }
+            .header h1 { font-size: 28px; }
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .sidebar-content {
-                flex-direction: row;
-                gap: 20px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-                max-width: 100%;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .assignment-card {
-                padding: 20px;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .ide-section {
-                flex-direction: column;
-            }
-
-            .CodeMirror {
-                height: 250px !important;
-            }
+            .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+            .sidebar-content { flex-direction: row; gap: 20px; }
+            .main-content { margin-left: 0; padding: 20px; max-width: 100%; }
+            .header h1 { font-size: 24px; }
+            .assignment-card { padding: 20px; }
+            .controls { flex-direction: column; }
+            button { width: 100%; justify-content: center; }
+            .ide-section { flex-direction: column; }
+            .CodeMirror { height: 250px !important; }
         }
 
         /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
     </style>
 </head>
 <body>
@@ -579,7 +511,8 @@
 <div class="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-logo">
-            <img src="jade_logo.webp" alt="Jade Global Logo" class="logo-img">
+            <img src="jade_logo.webp" alt="Jade Global Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display:none; font-weight: 800; color: var(--primary); font-size: 1.2rem; letter-spacing: -0.5px;">JADE GLOBAL</div>
         </div>
     </div>
 
@@ -593,7 +526,7 @@
         </div>
 
         <nav class="sidebar-nav" style="margin-top: auto;">
-            <a href="index.html">← Exit Assignment</a>
+            <a href="../index.html">← Exit Assignment</a>
         </nav>
     </div>
 </div>
@@ -615,14 +548,19 @@
 </div>
 
 <script>
-    // GATEKEEPER
+    // GATEKEEPER 
+    // Commented out so the UI will load perfectly during your local HTML tests. 
+    // To enable restrictions later, uncomment the block below.
     window.onload = function() {
+        /*
         const postDone = localStorage.getItem('int_post_completed');
         if (!postDone) {
             alert("Access Denied: Please complete the Intermediate Post-Assessment first.");
             window.location.href = "int_post_assessment.html";
             return;
         }
+        */
+        
         buildTasks();
         initializeEditors();
     };
@@ -695,6 +633,8 @@
 
     function buildTasks() {
         const container = document.getElementById('assignment-container');
+        container.innerHTML = ''; // Ensure container is empty before rendering
+        
         tasks.forEach((t, i) => {
             const div = document.createElement('div');
             div.className = `assignment-card ${i === 0 ? 'active' : ''}`;
@@ -708,7 +648,7 @@
 
                 <div class="editor-section">
                     <label class="editor-label">✏️ Code Editor</label>
-                    <div class="editor-info">Max 5 lines • Python syntax highlighting • Auto-formatted</div>
+                    <div class="editor-info">Max 5 lines • Python syntax highlighting</div>
                     <div class="editor-wrapper">
                         <textarea id="editor-${i}" class="code-input"></textarea>
                     </div>
@@ -727,6 +667,7 @@
                 <div class="solution-box" id="sol-${i}">
                     <div class="solution-title">✓ Model Solution</div>
                     <div class="solution-code">${t.solution}</div>
+                    <div class="solution-explanation"><strong>Hint:</strong> ${t.hint}</div>
                 </div>
             `;
             container.appendChild(div);
@@ -741,12 +682,7 @@
                 lineNumbers: true,
                 indentUnit: 4,
                 indentWithTabs: false,
-                lineWrapping: true,
-                smartIndent: true,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                styleActiveLine: true,
-                highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+                lineWrapping: true
             });
 
             // Limit paste to 5 lines
@@ -777,6 +713,9 @@
                 }
             });
         });
+        
+        // Fix: Ensure the first editor renders perfectly on initial load
+        setTimeout(() => editors[0].refresh(), 100);
     }
 
     function showStatus(i, type, message) {
@@ -846,8 +785,8 @@
         document.getElementById('submit-code-btn').style.display = 'flex';
         document.getElementById('next-btn').style.display = 'none';
 
-        // Refresh editor
-        setTimeout(() => editors[current].refresh(), 100);
+        // Refresh editor so CodeMirror renders properly when un-hidden
+        setTimeout(() => editors[current].refresh(), 50);
     }
 </script>
 
