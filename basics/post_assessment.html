@@ -5,431 +5,1103 @@
     <script src="APIWrapper.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Basic — Pre-Assessment</title>
+    <title>LLM Basic — Post-Assessment</title>
     <style>
         :root {
             --primary: #1a73e8;
-            --success: #2e7d32;
-            --error: #c62828;
+            --primary-light: #e8f0fe;
+            --primary-dark: #1557b0;
+            --success: #1e8e3e;
+            --success-light: #f1f8e9;
+            --error: #d32f2f;
+            --error-light: #ffebee;
             --bg: #f8f9fa;
+            --bg-light: #ffffff;
             --text-main: #202124;
             --text-sub: #5f6368;
-            --white: #ffffff;
-            --border: #e0e0e0;
+            --text-light: #80868b;
+            --border: #dadce0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        html, body {
+            height: 100%;
+        }
+
         body { 
-            font-family: 'Google Sans', Roboto, Arial, sans-serif; 
-            background: var(--bg); 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f4f8 100%);
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar Navigation to match Dashboard */
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-light);
+            border-right: 1px solid var(--border);
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
         .sidebar-header {
-    padding: 20px;
-    display: flex;
-    justify-content: center; /* Centers the logo horizontally */
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 20px;
-}
+            padding: 24px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
 
-.sidebar-logo {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+        .sidebar-logo {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-.logo-img {
-    width: 180px;      /* Adjust this width based on your PNG's dimensions */
-    height: auto;      /* Maintains aspect ratio */
-    display: block;
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
-}
+        .logo-img {
+            width: 160px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
 
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar-content {
+            padding: 30px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .timer-section {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .timer-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .timer-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+            transition: color 0.3s ease;
+        }
+
+        .timer-value.warning {
+            color: #f57c00;
+        }
+
+        .timer-value.critical {
+            color: var(--error);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .answered-section {
+            background: linear-gradient(135deg, var(--success-light) 0%, #f1f8e9 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+        }
+
+        .answered-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .answered-count {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .sidebar-nav {
+            margin-top: auto;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--text-main);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             flex: 1;
-            padding: 3rem;
-            max-width: 1000px;
-            margin-left: 260px;
+            margin-left: 280px;
+            padding: 40px;
+            overflow-y: auto;
+            max-width: 900px;
         }
 
-        /* Header Styles */
-        .header { margin-bottom: 2rem; }
-        .badge { 
+        .header {
+            margin-bottom: 40px;
+            animation: fadeInDown 0.5s ease;
+        }
+
+        .badge {
             display: inline-block;
-            font-size: 11px; font-weight: bold; 
-            padding: 4px 12px; border-radius: 4px; 
-            background: #e8f0fe; color: #1967d2;
-            margin-bottom: 1rem;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #d2e3fc 100%);
+            color: var(--primary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(26, 115, 232, 0.1);
         }
-        h1 { font-size: 2rem; color: #174ea6; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-sub); font-size: 0.95rem; }
 
-        /* Progress Bar */
-        .progress-container { margin-bottom: 2rem; }
-        .progress-bar { height: 6px; background: #dadce0; border-radius: 3px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--primary); transition: width 0.4s ease; }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
 
-        /* Question Cards */
-        .qcard { 
-            background: var(--white); 
-            border-radius: 16px; 
-            padding: 2rem; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-            display: none; 
+        .header p {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            margin-bottom: 40px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .progress-percentage {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* ===== QUESTION CARD ===== */
+        .qcard {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            display: none;
             border: 1px solid var(--border);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: fadeIn 0.4s ease;
         }
-        .qcard.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .topic-label { 
-            font-size: 11px; font-weight: bold; color: var(--primary); 
-            text-transform: uppercase; margin-bottom: 0.5rem; display: block;
+        .qcard.active {
+            display: flex;
         }
-        .qnum { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 1rem; }
-        .qtext { font-size: 1.2rem; font-weight: 500; margin-bottom: 1.5rem; line-height: 1.4; }
 
-        /* Options */
-        .options { display: flex; flex-direction: column; gap: 0.8rem; }
-        .opt { 
-            display: flex; align-items: center; gap: 1rem; 
-            padding: 1rem; border-radius: 12px; 
-            border: 1px solid var(--border); 
-            cursor: pointer; transition: all 0.2s;
+        .qcard-header {
+            margin-bottom: 32px;
         }
-        .opt:hover { background: #f1f3f4; border-color: var(--primary); }
-        .opt.selected { background: #e8f0fe; border-color: var(--primary); }
-        .olabel { 
-            width: 28px; height: 28px; border-radius: 50%; 
-            border: 1.5px solid #dadce0; display: flex; 
-            align-items: center; justify-content: center; font-size: 13px; font-weight: bold;
+
+        .topic-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: block;
         }
-        .opt.selected .olabel { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Navigation Buttons */
-        .nav-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 2rem; }
-        button { 
-            padding: 10px 24px; border-radius: 8px; border: 1px solid var(--border);
-            background: var(--white); cursor: pointer; font-weight: 500; transition: 0.2s;
+        .qnum {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 16px;
         }
-        button:hover:not(:disabled) { background: #f1f3f4; }
-        button:disabled { opacity: 0.4; cursor: not-allowed; }
-        .btn-submit { background: var(--primary); color: white; border: none; }
-        .btn-submit:hover { background: #174ea6; }
 
-        /* Results UI */
-        .results-header { text-align: center; padding: 2rem; background: var(--white); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem; }
-        .score-big { font-size: 3rem; font-weight: bold; color: var(--primary); }
-        .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--white); padding: 1.5rem; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        
-        .review-card { background: var(--white); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; border-left: 5px solid var(--border); }
-        .review-card.correct { border-left-color: var(--success); }
-        .review-card.incorrect { border-left-color: var(--error); }
-        .exp-box { background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: var(--text-sub); }
+        .qtext {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0;
+            line-height: 1.5;
+            letter-spacing: -0.3px;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .qcard-content {
+            flex: 1;
+        }
+
+        /* ===== OPTIONS ===== */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .opt {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .opt::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .opt:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
+        }
+
+        .opt:hover::before {
+            left: 100%;
+        }
+
+        .opt.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+
+        .olabel {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            background: var(--bg);
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .opt.selected .olabel {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        .otext {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        /* ===== CONTROLS ===== */
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        button {
+            padding: 12px 28px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: var(--bg-light);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            color: var(--text-main);
+        }
+
+        button:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            font-weight: 700;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+            transform: translateY(-2px);
+        }
+
+        #submit-row {
+            display: none;
+        }
+
+        /* ===== RESULTS ===== */
+        #results {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-header {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-light);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .results-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .score-big {
+            font-size: 56px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .results-subtitle {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn-submit {
+            padding: 14px 32px;
+            font-size: 15px;
+        }
+
+        .review-section {
+            margin-top: 40px;
+        }
+
+        .review-section h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .review-card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 5px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateX(4px);
+        }
+
+        .review-card.correct {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--success-light) 100%);
+        }
+
+        .review-card.incorrect {
+            border-left-color: var(--error);
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--error-light) 100%);
+        }
+
+        .review-qtext {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .review-item {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .review-item.correct {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .review-item.incorrect {
+            color: var(--error);
+        }
+
+        .exp-box {
+            background: rgba(255,255,255,0.6);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-sub);
+            border-left: 3px solid var(--primary);
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                padding: 30px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .qcard {
+                padding: 24px;
+                min-height: 450px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sidebar-content {
+                flex-direction: row;
+                gap: 20px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .qcard {
+                padding: 20px;
+                min-height: auto;
+            }
+
+            .nav-controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .btn-submit {
+                width: 100%;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
     <div class="sidebar-header">
-    <div class="sidebar-logo">
-        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+        <div class="sidebar-logo">
+            <img src="jade_logo.webp" alt="Jade Global Logo" class="logo-img">
+        </div>
     </div>
-</div>
-    <div style="margin-top: 2rem;">
-        <div class="subtitle" style="font-size: 0.8rem; text-transform: uppercase;">Time Elapsed</div>
-        <div id="qtimer" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">00:00</div>
-    </div>
-    <div style="margin-top: auto;">
-        <div class="subtitle">Questions Answered</div>
-        <div id="ans-num" style="font-weight: bold;">0 / 20</div>
+
+    <div class="sidebar-content">
+        <div class="timer-section">
+            <div class="timer-label">⏱ Time Remaining</div>
+            <div id="qtimer" class="timer-value">20:00</div>
+        </div>
+
+        <div class="answered-section">
+            <div class="answered-label">✓ Answered</div>
+            <div class="answered-count" id="ans-num">0 / 20</div>
+        </div>
+
+        <nav class="sidebar-nav" style="margin-top: auto;">
+            <a href="../index.html">← Exit Assessment</a>
+        </nav>
     </div>
 </div>
 
 <div class="main-content">
     <div id="quiz-ui">
         <div class="header">
-            <div class="badge">Module 1-3: Basics</div>
+            <div class="badge">📝 Assessment</div>
             <h1>Post-Assessment</h1>
-            <p class="subtitle">This diagnostic helps us understand your starting point. Answer naturally based on what you know now.</p>
+            <p>Demonstrate your learning from the course materials. Answer based on what you've learned.</p>
         </div>
 
         <div class="progress-container">
-            <div class="progress-bar"><div class="progress-fill" id="prog" style="width: 0%"></div></div>
+            <div class="progress-info">
+                <span class="progress-label">Progress</span>
+                <span class="progress-percentage" id="prog-text">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="prog" style="width: 0%"></div>
+            </div>
         </div>
 
         <div id="questions-container"></div>
 
         <div class="nav-controls">
-            <button id="prev-btn" onclick="nav(-1)" disabled>Previous</button>
-            <div id="submit-row" style="display:none">
-                <button class="btn-submit" onclick="submitAssessment()">Check My Results</button>
+            <button id="prev-btn" onclick="nav(-1)" disabled>← Previous</button>
+            <div id="submit-row">
+                <button class="btn-submit" onclick="submitAssessment()">Check My Results →</button>
             </div>
-            <button id="next-btn" onclick="nav(1)">Next</button>
+            <button id="next-btn" onclick="nav(1)">Next →</button>
         </div>
     </div>
 
-    <div id="results" style="display:none"></div>
+    <div id="results"></div>
 </div>
 
 <script>
-// 1. GATEKEEPER: Check if Content was completed
+const QS = [
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"According to the 2017 paper 'Attention is All You Need', what is the 'engine' powering modern LLMs?",
+        opts:["Recurrent Neural Networks (RNNs)","The Transformer Architecture","Long Short-Term Memory (LSTM)","Convolutional Neural Networks"],
+        ans:1,
+        exp:"The Transformer architecture, introduced in 2017, is the foundation for models like GPT, Claude, and Gemini."
+    },
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"Which mechanism allows a Transformer to connect every word in a sentence to every other word regardless of distance?",
+        opts:["Sequential Bottleneck","The Attention Mechanism","Linear Transformation","Data Scraping"],
+        ans:1,
+        exp:"The Attention mechanism looks at ALL other words to determine context, solving the long-term context memory loss of RNNs."
+    },
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"In the Attention formula, which component represents 'What information do I provide?'",
+        opts:["Query (Q)","Key (K)","Value (V)","Positional Encoding"],
+        ans:2,
+        exp:"Value (V) represents the actual content or information provided by a token."
+    },
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"Which half of the Transformer is responsible for 'Understanding' and building a contextual representation?",
+        opts:["The Decoder","The Encoder","The Output Layer","The Softmax Layer"],
+        ans:1,
+        exp:"The Encoder handles input embedding and positional encoding to 'understand' context."
+    },
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"Which model type uses only the 'Decoder' half of the Transformer for generation?",
+        opts:["BERT","RoBERTa","GPT-4","T5"],
+        ans:2,
+        exp:"GPT-4, Claude, and Llama are Decoder-only models focused on generating one token at a time."
+    },
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"Why is 'Positional Encoding' added to token embeddings?",
+        opts:["To reduce GPU costs","Because the attention mechanism has no inherent sense of word order","To translate words into French","To clean toxic content"],
+        ans:1,
+        exp:"Without positional encoding, a Transformer would treat 'Dog bites man' and 'Man bites dog' identically because attention has no sense of sequence."
+    },
+    {
+        topic:"Transformer Architecture", tc:"t-trans",
+        q:"What stage uses probabilities over the entire vocabulary to pick the highest probability token?",
+        opts:["Input Tokens","Layer Normalization","Output Layer + Softmax","Multi-Head Self-Attention"],
+        ans:2,
+        exp:"The final Softmax layer converts internal values into probabilities to select the next token."
+    },
+    {
+        topic:"What are LLMs", tc:"t-llm",
+        q:"What is the primary objective of an LLM during the 'Pre-training' phase?",
+        opts:["Translating books","Predicting the next token/word in a sequence","Cleaning Wikipedia data","Developing human emotions"],
+        ans:1,
+        exp:"LLMs learn by predicting the next word trillions of times from massive internet-scale data."
+    },
+    {
+        topic:"What are LLMs", tc:"t-llm",
+        q:"What does 'RLHF' stand for in the LLM training pipeline?",
+        opts:["Rapid Learning High Frequency","Reinforcement Learning from Human Feedback","Remote Language Handling Function","Randomized Linear Hidden Filters"],
+        ans:1,
+        exp:"RLHF uses human feedback to align the model's raw capabilities with human values and safety."
+    },
+    {
+        topic:"What are LLMs", tc:"t-llm",
+        q:"Approximately how many parameters does GPT-4 contain?",
+        opts:["175 Billion","500 Million","1.8 Trillion","10 Trillion"],
+        ans:2,
+        exp:"GPT-4 is a massive model with approximately 1.8 trillion parameters."
+    },
+    {
+        topic:"LLM Applications", tc:"t-app",
+        q:"Which healthcare software provider uses LLMs specifically for clinical note drafting?",
+        opts:["Khan Academy","Epic","Harvey AI","Shopify"],
+        ans:1,
+        exp:"Epic uses LLMs to help healthcare providers generate clinical notes and summarize patient records."
+    },
+    {
+        topic:"LLM Applications", tc:"t-app",
+        q:"Which model was specifically trained on financial data?",
+        opts:["Claude 3","Gemini 1.5","Bloomberg GPT","Mistral"],
+        ans:2,
+        exp:"Bloomberg GPT is an example of an industry-specific model trained on financial reporting data."
+    },
+    {
+        topic:"LLM Applications", tc:"t-app",
+        q:"Which application uses LLMs for automated code autocomplete and test generation?",
+        opts:["Netflix","GitHub Copilot","Spotify","Waymo"],
+        ans:1,
+        exp:"Software development is being changed by tools like GitHub Copilot, Cursor, and Tabnine."
+    },
+    {
+        topic:"LLM Applications", tc:"t-app",
+        q:"What is a capability of Multimodal AI models like Gemini 1.5 Pro?",
+        opts:["Summarizing video content and describing actions","Translating only two languages","Fixing hardware bugs","Running without GPUs"],
+        ans:0,
+        exp:"Multimodal models can reason about video content, images, and audio in addition to text."
+    },
+    {
+        topic:"Prompt Basics", tc:"t-prompt",
+        q:"Which prompting strategy involves giving 2-5 examples before the actual task?",
+        opts:["Zero-Shot Prompting","Few-Shot Prompting","Topic Labeling","Role Prompting"],
+        ans:1,
+        exp:"Few-shot prompting is best for nuanced or pattern-based tasks where examples guide the model."
+    },
+    {
+        topic:"Prompt Basics", tc:"t-prompt",
+        q:"What is a major risk when using LLMs for legal research or document drafting?",
+        opts:["The model is too slow","Hallucinations (stating false facts confidently)","The model cannot read PDFs","The model only knows 1950s law"],
+        ans:1,
+        exp:"LLMs cannot always guarantee factual accuracy and can hallucinate fake court cases or facts."
+    },
+    {
+        topic:"Prompt Basics", tc:"t-prompt",
+        q:"Which best practice helps an LLM act as a 'Smart Intern'?",
+        opts:["Providing no context","Being vague","Giving a specific role and clear context","Asking for 50 tasks at once"],
+        ans:2,
+        exp:"To get better results, you should provide context, assign a role (e.g., Senior Developer), and be specific."
+    },
+    {
+        topic:"NLP Fundamentals", tc:"t-nlp",
+        q:"Which type of tokenization does GPT use to handle unknown words by breaking them into frequent fragments?",
+        opts:["Word Tokenization","Character Tokenization","Subword (BPE) Tokenization","Sentence Parsing"],
+        ans:2,
+        exp:"LLMs use Byte Pair Encoding (BPE) or subword tokenization to handle morphology and rare words."
+    },
+    {
+        topic:"NLP Fundamentals", tc:"t-nlp",
+        q:"What does the analogy 'King - Man + Woman = Queen' demonstrate about word embeddings?",
+        opts:["The model was manually programmed with royal facts","Embeddings capture semantic relationships and reasoning from text patterns","Embeddings only work for gender-based words","The model is conscious of royal hierarchies"],
+        ans:1,
+        exp:"Embeddings represent words as vectors where similar meanings occupy similar positions in multidimensional space."
+    },
+    {
+        topic:"Introduction to AI", tc:"t-ai",
+        q:"What is the relationship between AI, Machine Learning (ML), and Deep Learning (DL)?",
+        opts:["They are the same thing","ML is a subset of AI; DL is a subset of ML","AI is a subset of DL","They are unrelated categories"],
+        ans:1,
+        exp:"AI is the broadest field; ML is a subset of AI, and DL (using multi-layered neural nets) is a subset of ML."
+    }
+];
+
+let current = 0;
+let answered = {};
+let submitted = false;
+let timeLeft = 20 * 60;
+let timerInt;
+
 window.onload = function() {
     const contentDone = localStorage.getItem('basics_content_completed');
     if (!contentDone) {
         alert("Please review the Learning Materials before taking the Post-Assessment.");
-        window.location.href = "content.html";
+        window.location.href = "llm_fundamentals.html";
         return;
     }
     buildQuestions();
     startTimer();
 };
 
-const QS = [
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"According to the 2017 paper 'Attention is All You Need', what is the 'engine' powering modern LLMs? [cite: 13, 35]",
-        opts:["Recurrent Neural Networks (RNNs)","The Transformer Architecture","Long Short-Term Memory (LSTM)","Convolutional Neural Networks"],
-        ans:1,
-        exp:"The Transformer architecture, introduced in 2017, is the foundation for models like GPT, Claude, and Gemini[cite: 35, 52]."
-    },
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"Which mechanism allows a Transformer to connect every word in a sentence to every other word regardless of distance? [cite: 49, 57]",
-        opts:["Sequential Bottleneck","The Attention Mechanism","Linear Transformation","Data Scraping"],
-        ans:1,
-        exp:"The Attention mechanism looks at ALL other words to determine context, solving the long-term context memory loss of RNNs[cite: 57, 58]."
-    },
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"In the Attention formula, which component represents 'What information do I provide?' [cite: 78, 79]",
-        opts:["Query (Q)","Key (K)","Value (V)","Positional Encoding"],
-        ans:2,
-        exp:"Value (V) represents the actual content or information provided by a token[cite: 79]."
-    },
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"Which half of the Transformer is responsible for 'Understanding' and building a contextual representation? [cite: 84, 85]",
-        opts:["The Decoder","The Encoder","The Output Layer","The Softmax Layer"],
-        ans:1,
-        exp:"The Encoder handles input embedding and positional encoding to 'understand' context[cite: 84, 90]."
-    },
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"Which model type uses only the 'Decoder' half of the Transformer for generation? [cite: 93, 100]",
-        opts:["BERT","RoBERTa","GPT-4","T5"],
-        ans:2,
-        exp:"GPT-4, Claude, and Llama are Decoder-only models focused on generating one token at a time[cite: 99, 100]."
-    },
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"Why is 'Positional Encoding' added to token embeddings? [cite: 106, 107]",
-        opts:["To reduce GPU costs","Because the attention mechanism has no inherent sense of word order","To translate words into French","To clean toxic content"],
-        ans:1,
-        exp:"Without positional encoding, a Transformer would treat 'Dog bites man' and 'Man bites dog' identically because attention has no sense of sequence[cite: 107, 108]."
-    },
-    {
-        topic:"Transformer Architecture", tc:"t-trans",
-        q:"What stage uses probabilities over the entire vocabulary to pick the highest probability token? [cite: 148, 149]",
-        opts:["Input Tokens","Layer Normalization","Output Layer + Softmax","Multi-Head Self-Attention"],
-        ans:2,
-        exp:"The final Softmax layer converts internal values into probabilities to select the next token, such as 'Bonjour'[cite: 149, 152]."
-    },
-    {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"What is the primary objective of an LLM during the 'Pre-training' phase? [cite: 700, 701]",
-        opts:["Translating books","Predicting the next token/word in a sequence","Cleaning Wikipedia data","Developing human emotions"],
-        ans:1,
-        exp:"LLMs learn by predicting the next word trillions of times from massive internet-scale data[cite: 701, 784]."
-    },
-    {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"What does 'RLHF' stand for in the LLM training pipeline? [cite: 704]",
-        opts:["Rapid Learning High Frequency","Reinforcement Learning from Human Feedback","Remote Language Handling Function","Randomized Linear Hidden Filters"],
-        ans:1,
-        exp:"RLHF uses human feedback to align the model's raw capabilities with human values and safety[cite: 705]."
-    },
-    {
-        topic:"What are LLMs", tc:"t-llm",
-        q:"Approximately how many parameters does GPT-4 contain? [cite: 676]",
-        opts:["175 Billion","500 Million","1.8 Trillion","10 Trillion"],
-        ans:2,
-        exp:"GPT-4 is a massive model with approximately 1.8 trillion parameters[cite: 676]."
-    },
-    {
-        topic:"LLM Applications", tc:"t-app",
-        q:"Which healthcare software provider uses LLMs specifically for clinical note drafting? [cite: 207]",
-        opts:["Khan Academy","Epic","Harvey AI","Shopify"],
-        ans:1,
-        exp:"Epic uses LLMs to help healthcare providers generate clinical notes and summarize patient records[cite: 206, 207]."
-    },
-    {
-        topic:"LLM Applications", tc:"t-app",
-        q:"Which model was specifically trained on financial data? ",
-        opts:["Claude 3","Gemini 1.5","Bloomberg GPT","Mistral"],
-        ans:2,
-        exp:"Bloomberg GPT is an example of an industry-specific model trained on financial reporting data[cite: 218, 219]."
-    },
-    {
-        topic:"LLM Applications", tc:"t-app",
-        q:"Which application uses LLMs for automated code autocomplete and test generation? [cite: 233, 234]",
-        opts:["Netflix","GitHub Copilot","Spotify","Waymo"],
-        ans:1,
-        exp:"Software development is being changed by tools like GitHub Copilot, Cursor, and Tabnine[cite: 234, 237]."
-    },
-    {
-        topic:"LLM Applications", tc:"t-app",
-        q:"What is a capability of Multimodal AI models like Gemini 1.5 Pro? [cite: 253, 254]",
-        opts:["Summarizing video content and describing actions","Translating only two languages","Fixing hardware bugs","Running without GPUs"],
-        ans:0,
-        exp:"Multimodal models can reason about video content, images, and audio in addition to text[cite: 243, 254]."
-    },
-    {
-        topic:"Prompt Basics", tc:"t-prompt",
-        q:"Which prompting strategy involves giving 2-5 examples before the actual task? [cite: 298, 299]",
-        opts:["Zero-Shot Prompting","Few-Shot Prompting","Topic Labeling","Role Prompting"],
-        ans:1,
-        exp:"Few-shot prompting is best for nuanced or pattern-based tasks where examples guide the model[cite: 299, 307]."
-    },
-    {
-        topic:"Prompt Basics", tc:"t-prompt",
-        q:"What is a major risk when using LLMs for legal research or document drafting? [cite: 760, 785]",
-        opts:["The model is too slow","Hallucinations (stating false facts confidently)","The model cannot read PDFs","The model only knows 1950s law"],
-        ans:1,
-        exp:"LLMs cannot always guarantee factual accuracy and can hallucinate fake court cases or facts[cite: 760, 767]."
-    },
-    {
-        topic:"Prompt Basics", tc:"t-prompt",
-        q:"Which best practice helps an LLM act as a 'Smart Intern'? [cite: 331, 341]",
-        opts:["Providing no context","Being vague","Giving a specific role and clear context","Asking for 50 tasks at once"],
-        ans:2,
-        exp:"To get better results, you should provide context, assign a role (e.g., Senior Developer), and be specific[cite: 328, 331]."
-    },
-    {
-        topic:"NLP Fundamentals", tc:"t-nlp",
-        q:"Which type of tokenization does GPT use to handle unknown words by breaking them into frequent fragments? [cite: 603, 604]",
-        opts:["Word Tokenization","Character Tokenization","Subword (BPE) Tokenization","Sentence Parsing"],
-        ans:2,
-        exp:"LLMs use Byte Pair Encoding (BPE) or subword tokenization to handle morphology and rare words[cite: 603, 608]."
-    },
-    {
-        topic:"NLP Fundamentals", tc:"t-nlp",
-        q:"What does the analogy 'King - Man + Woman = Queen' demonstrate about word embeddings? [cite: 628, 629]",
-        opts:["The model was manually programmed with royal facts","Embeddings capture semantic relationships and reasoning from text patterns","Embeddings only work for gender-based words","The model is conscious of royal hierarchies"],
-        ans:1,
-        exp:"Embeddings represent words as vectors where similar meanings occupy similar positions in multidimensional space[cite: 618, 630]."
-    },
-    {
-        topic:"Introduction to AI", tc:"t-ai",
-        q:"What is the relationship between AI, Machine Learning (ML), and Deep Learning (DL)? [cite: 454, 455]",
-        opts:["They are the same thing","ML is a subset of AI; DL is a subset of ML","AI is a subset of DL","They are unrelated categories"],
-        ans:1,
-        exp:"AI is the broadest field; ML is a subset of AI, and DL (using multi-layered neural nets) is a subset of ML[cite: 458, 469]."
-    }
-];
-let current = 0, answered = {}, submitted = false;
-let timeLeft = 20 * 60; // 20 Minutes
-let timerInt;
-
-function buildQuestions(){
-    const c=document.getElementById('questions-container');
-    QS.forEach((q,i)=>{
-        const d=document.createElement('div');
-        d.className='qcard'+(i===0?' active':'');
-        d.id='q'+i;
-        d.innerHTML=`
-            <div class="topic-label">${q.topic}</div>
-            <div class="qnum">Step ${i+1} of ${QS.length}</div>
-            <div class="qtext">${q.q}</div>
-            <div class="options" id="opts${i}">
-                ${q.opts.map((o,j)=>`
-                    <div class="opt" id="opt${i}_${j}" onclick="selectOpt(${i},${j})">
-                        <div class="olabel">${String.fromCharCode(65+j)}</div>
-                        <div class="otext">${o}</div>
-                    </div>`).join('')}
+function buildQuestions() {
+    const c = document.getElementById('questions-container');
+    QS.forEach((q, i) => {
+        const d = document.createElement('div');
+        d.className = 'qcard' + (i === 0 ? ' active' : '');
+        d.id = 'q' + i;
+        d.innerHTML = `
+            <div class="qcard-header">
+                <div class="topic-label">📌 ${q.topic}</div>
+                <div class="qnum">Question ${i+1} of ${QS.length}</div>
+                <div class="qtext">${q.q}</div>
+            </div>
+            <div class="qcard-content">
+                <div class="options" id="opts${i}">
+                    ${q.opts.map((o, j) => `
+                        <div class="opt" id="opt${i}_${j}" onclick="selectOpt(${i},${j})">
+                            <div class="olabel">${String.fromCharCode(65+j)}</div>
+                            <div class="otext">${o}</div>
+                        </div>`).join('')}
+                </div>
             </div>`;
         c.appendChild(d);
     });
 }
 
-function selectOpt(qi,oi){
-    if(submitted) return;
-    answered[qi]=oi;
-    document.querySelectorAll(`#opts${qi} .opt`).forEach((el,j)=> el.classList.toggle('selected', j===oi));
-    document.getElementById('ans-num').textContent = `${Object.keys(answered).length} / ${QS.length}`;
-    document.getElementById('prog').style.width = Math.round((Object.keys(answered).length/QS.length)*100)+'%';
-    if(Object.keys(answered).length >= 15) document.getElementById('submit-row').style.display='block';
-}
-
-function nav(dir){
-    document.getElementById('q'+current).classList.remove('active');
-    current = Math.max(0, Math.min(QS.length-1, current+dir));
-    document.getElementById('q'+current).classList.add('active');
-    document.getElementById('prev-btn').disabled = (current===0);
-    document.getElementById('next-btn').disabled = (current===QS.length-1);
-}
-
-function submitAssessment(){
-    if(submitted) return;
-    submitted=true; 
-    clearInterval(timerInt);
+function selectOpt(qi, oi) {
+    if (submitted) return;
+    answered[qi] = oi;
+    document.querySelectorAll(`#opts${qi} .opt`).forEach((el, j) => el.classList.toggle('selected', j === oi));
     
-    // CRITICAL: Unlock the Assignment
+    const answeredCount = Object.keys(answered).length;
+    document.getElementById('ans-num').textContent = `${answeredCount} / ${QS.length}`;
+    
+    const progPct = Math.round((answeredCount / QS.length) * 100);
+    document.getElementById('prog').style.width = progPct + '%';
+    document.getElementById('prog-text').textContent = progPct + '%';
+    
+    if (answeredCount >= 15) {
+        document.getElementById('submit-row').style.display = 'block';
+    }
+}
+
+function nav(dir) {
+    document.getElementById('q' + current).classList.remove('active');
+    current = Math.max(0, Math.min(QS.length - 1, current + dir));
+    document.getElementById('q' + current).classList.add('active');
+    document.getElementById('prev-btn').disabled = (current === 0);
+    document.getElementById('next-btn').disabled = (current === QS.length - 1);
+}
+
+function submitAssessment() {
+    if(submitted) return;
+    submitted = true;
+    clearInterval(timerInt);
     localStorage.setItem('basics_post_completed', 'true');
     showResults();
 }
 
-function showResults(){
-    document.getElementById('quiz-ui').style.display='none';
-    const r=document.getElementById('results'); r.style.display='block';
-    let correct=0; QS.forEach((q,i)=> { if(answered[i]===q.ans) correct++; });
-    const pct=Math.round((correct/QS.length)*100);
+function showResults() {
+    document.getElementById('quiz-ui').style.display = 'none';
+    const r = document.getElementById('results');
+    r.style.display = 'block';
+    
+    let correct = 0;
+    QS.forEach((q, i) => { if (answered[i] === q.ans) correct++; });
+    const pct = Math.round((correct / QS.length) * 100);
 
     const timeSpentSec = (20 * 60) - timeLeft;
     const m = Math.floor(timeSpentSec / 60), s = timeSpentSec % 60;
+    const timeStr = `${m}:${s < 10 ? '0' : ''}${s}`;
 
     r.innerHTML = `
         <div class="results-header">
-            <h2 style="margin-bottom:10px">Assessment Complete</h2>
+            <h2>🎉 Post-Assessment Complete</h2>
             <div class="score-big">${pct}%</div>
-            <p class="subtitle">Post-Assessment finished. Assignment is now unlocked.</p>
+            <p class="results-subtitle">Great work! Assignment is now unlocked.</p>
         </div>
+
         <div class="result-grid">
-            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${correct}</div><div class="subtitle">Correct</div></div>
-            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${QS.length-correct}</div><div class="subtitle">Incorrect</div></div>
-            <div class="stat-card"><div style="font-size:24px; font-weight:bold">${m}:${s<10?'0':''}${s}</div><div class="subtitle">Duration</div></div>
+            <div class="stat-card">
+                <div class="stat-value">${correct}</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${QS.length - correct}</div>
+                <div class="stat-label">Incorrect</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${timeStr}</div>
+                <div class="stat-label">Time Taken</div>
+            </div>
         </div>
-        <div style="text-align:center; margin-top:20px">
-            <button class="btn-submit" onclick="window.location.href='assignment.html'">Proceed to Coding Assignment →</button>
+
+        <div class="action-buttons">
+            <button class="btn-submit" onclick="window.location.href='assignment.html'">💻 Go to Assignment →</button>
+        </div>
+
+        <div class="review-section">
+            <h3>📋 Review Your Answers</h3>
+            ${QS.map((q, i) => {
+                const ua = answered[i];
+                const ok = ua === q.ans;
+                return `
+                <div class="review-card ${ok ? 'correct' : 'incorrect'}">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <span style="font-size: 18px;">${ok ? '✓' : '✗'}</span>
+                        <div class="review-qtext">Question ${i + 1}</div>
+                    </div>
+                    <div style="font-weight: 600; margin-bottom: 12px; color: var(--text-main);">${q.q}</div>
+                    <div class="review-item">Your Answer: <strong>${ua !== undefined ? q.opts[ua] : 'Not answered'}</strong></div>
+                    ${!ok ? `<div class="review-item correct">✓ Correct: ${q.opts[q.ans]}</div>` : ''}
+                    <div class="exp-box">💡 ${q.exp}</div>
+                </div>`;
+            }).join('')}
         </div>
     `;
 }
 
-function startTimer(){
-    timerInt=setInterval(()=>{
+function startTimer() {
+    timerInt = setInterval(() => {
         timeLeft--;
-        const m=Math.floor(timeLeft/60), s=timeLeft%60;
-        const display = document.getElementById('qtimer');
-        display.textContent=`${m}:${s<10?'0':''}${s}`;
+        const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+        const timerDisplay = document.getElementById('qtimer');
+        timerDisplay.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
         
-        if(timeLeft <= 60) display.style.color = "#c62828";
-        if(timeLeft <= 0) {
+        if (timeLeft <= 60) {
+            timerDisplay.classList.add('warning');
+        }
+        if (timeLeft <= 30) {
+            timerDisplay.classList.remove('warning');
+            timerDisplay.classList.add('critical');
+        }
+        
+        if (timeLeft <= 0) {
             clearInterval(timerInt);
-            alert("Time's up! Submitting your answers.");
+            alert("⏱ Time is up! Submitting your answers...");
             submitAssessment();
         }
-    },1000);
+    }, 1000);
 }
 </script>
 </body>
 </html>
-
-
-

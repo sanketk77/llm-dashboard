@@ -3,164 +3,695 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basics — Coding Assignment</title>
+    <title>Intermediate — Coding Assignment</title>
+    
+    <!-- CodeMirror for Code Editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+
     <style>
         :root {
             --primary: #1a73e8;
-            --success: #2e7d32;
+            --primary-light: #e8f0fe;
+            --primary-dark: #1557b0;
+            --success: #1e8e3e;
+            --success-light: #f1f8e9;
+            --warning: #f57c00;
+            --error: #d32f2f;
+            --error-light: #ffebee;
             --bg: #f8f9fa;
+            --bg-light: #ffffff;
             --text-main: #202124;
             --text-sub: #5f6368;
-            --white: #ffffff;
-            --border: #e0e0e0;
+            --text-light: #80868b;
+            --border: #dadce0;
             --code-bg: #282c34;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Google Sans', Roboto, sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f4f8 100%);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-light);
+            border-right: 1px solid var(--border);
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
 
         .sidebar-header {
-    padding: 20px;
-    display: flex;
-    justify-content: center; /* Centers the logo horizontally */
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 20px;
-}
+            padding: 24px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
 
-.sidebar-logo {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+        .sidebar-logo {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-.logo-img {
-    width: 180px;      /* Adjust this width based on your PNG's dimensions */
-    height: auto;      /* Maintains aspect ratio */
-    display: block;
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Optional: adds a soft shadow */
-}
-        .main-content { flex: 1; padding: 3rem; max-width: 1000px; margin-left: 260px; }
+        .logo-img {
+            width: 160px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
 
-        .header { margin-bottom: 2rem; }
-        .badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 4px 12px; border-radius: 4px; background: #e8f0fe; color: #1967d2; text-transform: uppercase; margin-bottom: 10px; }
-        
-        .assignment-card { background: var(--white); border-radius: 16px; border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem; display: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .assignment-card.active { display: block; animation: fadeIn 0.4s ease; }
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
 
-        .instruction { font-size: 1.1rem; margin-bottom: 1.5rem; line-height: 1.5; color: var(--text-main); }
-        
-        textarea { width: 100%; height: 150px; background: var(--code-bg); color: #abb2bf; font-family: 'Courier New', monospace; padding: 15px; border-radius: 8px; border: none; font-size: 14px; resize: vertical; margin-bottom: 15px; }
-        
-        .solution-box { display: none; background: #e6f4ea; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--success); color: #0d652d; margin-top: 15px; }
-        .solution-box.show { display: block; }
-        .solution-box pre { font-family: 'Courier New', monospace; font-size: 13px; margin-top: 10px; white-space: pre-wrap; }
+        .sidebar-content {
+            padding: 30px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
 
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
-        button { padding: 12px 24px; border-radius: 8px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: white; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; border: none; }
-        .btn-success { background: var(--success); color: white; border: none; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .progress-section {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .progress-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .progress-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-bar-small {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill-small {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transition: width 0.4s ease;
+        }
+
+        .sidebar-nav {
+            margin-top: auto;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--text-main);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            overflow-y: auto;
+            max-width: 1100px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+            animation: fadeInDown 0.5s ease;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #d2e3fc 100%);
+            color: var(--primary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(26, 115, 232, 0.1);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        /* ===== ASSIGNMENT CARD ===== */
+        .assignment-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            display: none;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .assignment-card.active {
+            display: block;
+        }
+
+        .task-topic {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .instruction {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .editor-section {
+            margin-bottom: 24px;
+        }
+
+        .editor-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .editor-info {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        /* ===== CODE EDITOR ===== */
+        .editor-wrapper {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: var(--code-bg);
+        }
+
+        .CodeMirror {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace !important;
+            font-size: 14px !important;
+            height: 300px !important;
+            background: var(--code-bg) !important;
+        }
+
+        .CodeMirror-linenumber {
+            color: #666 !important;
+        }
+
+        /* ===== STATUS MESSAGES ===== */
+        .editor-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .editor-status.show {
+            display: flex;
+        }
+
+        .editor-status.warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+
+        .editor-status.error {
+            background: linear-gradient(135deg, var(--error-light) 0%, #ffcdd2 100%);
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+
+        .editor-status.success {
+            background: linear-gradient(135deg, var(--success-light) 0%, #c8e6c9 100%);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        /* ===== SOLUTION BOX ===== */
+        .solution-box {
+            display: none;
+            background: linear-gradient(135deg, var(--success-light) 0%, #f1f8e9 100%);
+            padding: 24px;
+            border-radius: 12px;
+            border-left: 5px solid var(--success);
+            box-shadow: var(--shadow);
+            margin-top: 24px;
+        }
+
+        .solution-box.show {
+            display: block;
+            animation: slideDown 0.4s ease;
+        }
+
+        .solution-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .solution-code {
+            background: var(--code-bg);
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+            font-size: 13px;
+            color: #abb2bf;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* ===== IDE BUTTONS ===== */
+        .ide-section {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ide-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: var(--bg-light);
+            color: var(--text-main);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .ide-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 28px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: var(--bg-light);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            color: var(--text-main);
+        }
+
+        button:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(30, 142, 62, 0.3);
+            font-weight: 700;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 6px 16px rgba(30, 142, 62, 0.4);
+            transform: translateY(-2px);
+        }
+
+        #next-btn {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                padding: 30px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sidebar-content {
+                flex-direction: row;
+                gap: 20px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .assignment-card {
+                padding: 20px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ide-section {
+                flex-direction: column;
+            }
+
+            .CodeMirror {
+                height: 250px !important;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
     <div class="sidebar-header">
-    <div class="sidebar-logo">
-        <img src="jade_logo.png" alt="Jade Global Logo" class="logo-img">
+        <div class="sidebar-logo">
+            <img src="jade_logo.webp" alt="Jade Global Logo" class="logo-img">
+        </div>
     </div>
-</div>
-    <div style="margin-top: 3rem;">
-        <p style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--text-sub);">Basics Level</p>
-        <p id="progress-text" style="color: var(--primary); font-weight: 500;">Task 1 of 10</p>
+
+    <div class="sidebar-content">
+        <div class="progress-section">
+            <div class="progress-label">💻 Task Progress</div>
+            <div class="progress-value" id="progress-text">1 / 10</div>
+            <div class="progress-bar-small">
+                <div class="progress-fill-small" id="progress-fill" style="width: 10%"></div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" style="margin-top: auto;">
+            <a href="index.html">← Exit Assignment</a>
+        </nav>
     </div>
 </div>
 
 <div class="main-content">
     <div class="header">
-        <div class="badge">Practical Coding</div>
+        <div class="badge">💻 Practical Coding</div>
         <h1>LLM Python & Prompting Tasks</h1>
-        <p style="color: var(--text-sub);">Write your solution in the editor below. Submit to view the best-practice answer.</p>
+        <p>Advanced techniques for LLM integration. Max 5 lines per task. Try online IDEs for testing.</p>
     </div>
 
     <div id="assignment-container"></div>
 
     <div class="controls">
-        <button id="prev-btn" onclick="move(-1)" disabled>Previous</button>
-        <button id="submit-code-btn" class="btn-success" onclick="submitCode()">Submit Code</button>
-        <button id="next-btn" class="btn-primary" onclick="move(1)" style="display:none">Next Task</button>
+        <button id="prev-btn" onclick="move(-1)" disabled>← Previous</button>
+        <button id="submit-code-btn" class="btn-success" onclick="submitCode()">Submit & Review →</button>
+        <button id="next-btn" class="btn-primary" onclick="move(1)">Next Task →</button>
     </div>
 </div>
 
 <script>
-    // 1. GATEKEEPER: Ensure the user passed the Intermediate Post-Assessment first
+    // GATEKEEPER
     window.onload = function() {
         const postDone = localStorage.getItem('int_post_completed');
         if (!postDone) {
-            alert("Access Denied: Please complete the Intermediate Post-Assessment (Quiz) first.");
+            alert("Access Denied: Please complete the Intermediate Post-Assessment first.");
             window.location.href = "int_post_assessment.html";
             return;
         }
         buildTasks();
-        document.getElementById('progress-text').textContent = `Task 1 of ${tasks.length}`;
+        initializeEditors();
     };
 
-     const tasks = [
-{
-topic: "Structured Prompting",
-instruction: "Write a Python prompt that asks an LLM to summarize a given variable 'article' into exactly 3 bullet points for a business audience.",
-solution: "article = '...'\nprompt = f'Summarize the following article in exactly 3 bullet points for a business audience:\\n{article}'"
-},
-{
-topic: "Role Prompting",
-instruction: "Create a system message where the LLM acts as a technical support assistant that diagnoses software issues and suggests fixes.",
-solution: "system_message = {\n  'role': 'system',\n  'content': 'You are a technical support assistant. Diagnose issues and suggest possible fixes clearly.'\n}"
-},
-{
-topic: "Temperature Control",
-instruction: "Write a Python API call snippet where the same prompt is executed with temperature = 0.0 and temperature = 1.0.",
-solution: "response1 = client.chat.completions.create(\n  model='gpt-4o',\n  messages=[{'role':'user','content':'Write a tagline for a coffee brand'}],\n  temperature=0.0\n)\n\nresponse2 = client.chat.completions.create(\n  model='gpt-4o',\n  messages=[{'role':'user','content':'Write a tagline for a coffee brand'}],\n  temperature=1.0\n)"
-},
-{
-topic: "Prompt Chaining",
-instruction: "Write pseudocode (or Python comments) showing a 3-step pipeline: extract key points → analyze sentiment → generate summary.",
-solution: "# Step 1: Extract key points using LLM\n# Step 2: Analyze sentiment of extracted points\n# Step 3: Generate final summary from results\n\n# Each step uses a separate LLM call"
-},
-{
-topic: "API Error Handling",
-instruction: "Write a Python function that retries an API call using exponential backoff when a rate limit error occurs.",
-solution: "import time\n\ndef call_api_with_retry(prompt, retries=3):\n    for attempt in range(retries):\n        try:\n            return client.chat.completions.create(\n                model='gpt-4o',\n                messages=[{'role':'user','content':prompt}]\n            )\n        except Exception:\n            time.sleep(2 ** attempt)\n    raise Exception('Max retries exceeded')"
-},
-{
-topic: "LangChain LCEL Chain",
-instruction: "Using LangChain, write a simple LCEL chain: PromptTemplate → LLM → OutputParser for explaining a topic in one sentence.",
-solution: "from langchain_core.prompts import ChatPromptTemplate\nfrom langchain_openai import ChatOpenAI\nfrom langchain_core.output_parsers import StrOutputParser\n\nprompt = ChatPromptTemplate.from_template('Explain {topic} in one sentence')\nllm = ChatOpenAI(model='gpt-4o')\nparser = StrOutputParser()\n\nchain = prompt | llm | parser\nresult = chain.invoke({'topic': 'transformers'})"
-},
-{
-topic: "Embeddings Similarity",
-instruction: "Write Python code to compute cosine similarity between a query embedding and a list of document embeddings.",
-solution: "from sklearn.metrics.pairwise import cosine_similarity\n\nquery_vec = embed('What is AI?')\ndoc_vecs = embed(['AI basics', 'Cooking recipes', 'Football news'])\n\nscores = cosine_similarity([query_vec], doc_vecs)[0]\nbest_match = doc_vecs[scores.argmax()]"
-},
-{
-topic: "Vector Database Query",
-instruction: "Using a vector database (like Chroma), write code to store 2 documents and query the most relevant result for 'machine learning'.",
-solution: "import chromadb\n\nclient = chromadb.Client()\ncollection = client.create_collection('docs')\n\ncollection.add(documents=['ML is powerful', 'Cooking is fun'], ids=['1','2'])\n\nresults = collection.query(query_texts=['machine learning'], n_results=1)\nprint(results['documents'])"
-},
-{
-topic: "Basic RAG Pipeline",
-instruction: "Write pseudocode for a RAG pipeline: load document → chunk → embed → store → retrieve → generate answer.",
-solution: "# Load document\n# Split into chunks\n# Convert chunks into embeddings\n# Store in vector DB\n# Embed user query\n# Retrieve top chunks\n# Pass context + query to LLM\n# Generate answer"
-},
-{
-topic: "RAG Optimization (Hardest)",
-instruction: "Modify a prompt to ensure the LLM answers ONLY from retrieved context and says 'I don't know' if the answer is not found.",
-solution: "prompt = f\"\"\"\nAnswer the question using ONLY the provided context.\nIf the answer is not in the context, say 'I don't know'.\n\nContext: {context}\nQuestion: {question}\n\"\"\""
-}
-];
+    const tasks = [
+        {
+            topic: "Structured Prompting",
+            instruction: "Write a Python prompt that asks an LLM to summarize a given variable 'article' into exactly 3 bullet points for a business audience.",
+            solution: "article = '...'\nprompt = f'Summarize in 3 bullets for business:\\n{article}'",
+            hint: "Use f-string with clear constraints"
+        },
+        {
+            topic: "Role Prompting",
+            instruction: "Create a system message where the LLM acts as a technical support assistant that diagnoses software issues and suggests fixes.",
+            solution: "system_msg = {\n  'role': 'system',\n  'content': 'You are a technical support assistant. Diagnose issues clearly.'\n}",
+            hint: "Define role and behavior"
+        },
+        {
+            topic: "Temperature Control",
+            instruction: "Write a Python API call snippet where the same prompt is executed with temperature = 0.0 and temperature = 1.0.",
+            solution: "# Temperature 0.0 (deterministic)\nresp1 = client.chat.completions.create(\n  model='gpt-4o', temperature=0.0)\n# Temperature 1.0 (creative)",
+            hint: "Show both API calls side by side"
+        },
+        {
+            topic: "Prompt Chaining",
+            instruction: "Write pseudocode showing a 3-step pipeline: extract key points → analyze sentiment → generate summary.",
+            solution: "# Step 1: Extract\n# Step 2: Analyze sentiment\n# Step 3: Summarize\n# Each uses separate LLM call",
+            hint: "Comment-based pseudocode works"
+        },
+        {
+            topic: "API Error Handling",
+            instruction: "Write a Python function that retries an API call using exponential backoff when a rate limit error occurs.",
+            solution: "def retry_api(prompt, retries=3):\n  for i in range(retries):\n    try: return client.chat.completions.create(...)\n    except: time.sleep(2**i)",
+            hint: "Use try-except with time.sleep"
+        },
+        {
+            topic: "LangChain LCEL Chain",
+            instruction: "Using LangChain, write a simple LCEL chain: PromptTemplate → LLM → OutputParser for explaining a topic in one sentence.",
+            solution: "prompt = ChatPromptTemplate.from_template('{topic}')\nllm = ChatOpenAI()\nparser = StrOutputParser()\nchain = prompt | llm | parser",
+            hint: "Use pipe operator for chaining"
+        },
+        {
+            topic: "Embeddings Similarity",
+            instruction: "Write Python code to compute cosine similarity between a query embedding and a list of document embeddings.",
+            solution: "from sklearn.metrics.pairwise import cosine_similarity\nscores = cosine_similarity([query_vec], doc_vecs)[0]\nbest = doc_vecs[scores.argmax()]",
+            hint: "Use sklearn for similarity"
+        },
+        {
+            topic: "Vector Database Query",
+            instruction: "Using a vector database (like Chroma), write code to store 2 documents and query the most relevant result for 'machine learning'.",
+            solution: "import chromadb\ndb = chromadb.Client()\ncol = db.create_collection('docs')\ncol.add(documents=['ML','Fun'], ids=['1','2'])\nresults = col.query(query_texts=['ML'])",
+            hint: "Create collection then query"
+        },
+        {
+            topic: "Basic RAG Pipeline",
+            instruction: "Write pseudocode for a RAG pipeline: load → chunk → embed → store → retrieve → generate answer.",
+            solution: "# Load document\n# Chunk it\n# Embed chunks\n# Store in vector DB\n# Retrieve top chunks\n# Generate with context",
+            hint: "Sequential steps in comments"
+        },
+        {
+            topic: "RAG Optimization (Hardest)",
+            instruction: "Modify a prompt to ensure the LLM answers ONLY from retrieved context and says 'I don't know' if the answer is not found.",
+            solution: "prompt = f'Answer ONLY from context.\\nIf not found, say I don\\'t know.\\nContext: {ctx}\\nQ: {q}'",
+            hint: "Add explicit instruction in prompt"
+        }
+    ];
 
     let current = 0;
+    let editors = {};
 
     function buildTasks() {
         const container = document.getElementById('assignment-container');
@@ -169,52 +700,156 @@ solution: "prompt = f\"\"\"\nAnswer the question using ONLY the provided context
             div.className = `assignment-card ${i === 0 ? 'active' : ''}`;
             div.id = `task-${i}`;
             div.innerHTML = `
-                <div class="badge">Topic: ${t.topic}</div>
-                <div class="instruction">${t.instruction}</div>
-                <textarea id="input-${i}" placeholder="Write your code here..."></textarea>
+                <div class="task-topic">📌 ${t.topic}</div>
+                
+                <div class="instruction">
+                    <strong>Task:</strong> ${t.instruction}
+                </div>
+
+                <div class="editor-section">
+                    <label class="editor-label">✏️ Code Editor</label>
+                    <div class="editor-info">Max 5 lines • Python syntax highlighting • Auto-formatted</div>
+                    <div class="editor-wrapper">
+                        <textarea id="editor-${i}" class="code-input"></textarea>
+                    </div>
+                    <div class="editor-status" id="status-${i}"></div>
+                </div>
+
+                <div class="ide-section">
+                    <a href="https://replit.com/new/python" target="_blank" class="ide-btn">
+                        🌐 Try on Replit
+                    </a>
+                    <a href="https://www.online-python.com/" target="_blank" class="ide-btn">
+                        💻 Online IDE
+                    </a>
+                </div>
+
                 <div class="solution-box" id="sol-${i}">
-                    <strong>Model Solution:</strong>
-                    <pre>${t.solution}</pre>
+                    <div class="solution-title">✓ Model Solution</div>
+                    <div class="solution-code">${t.solution}</div>
                 </div>
             `;
             container.appendChild(div);
         });
     }
 
+    function initializeEditors() {
+        tasks.forEach((t, i) => {
+            editors[i] = CodeMirror.fromTextArea(document.getElementById(`editor-${i}`), {
+                mode: 'python',
+                theme: 'dracula',
+                lineNumbers: true,
+                indentUnit: 4,
+                indentWithTabs: false,
+                lineWrapping: true,
+                smartIndent: true,
+                matchBrackets: true,
+                autoCloseBrackets: true,
+                styleActiveLine: true,
+                highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+            });
+
+            // Limit paste to 5 lines
+            editors[i].on('paste', (instance, event) => {
+                const clipboardData = event.clipboardData || window.clipboardData;
+                const pastedText = clipboardData.getData('Text');
+                const lines = pastedText.split('\n').filter(l => l.trim());
+                
+                if (lines.length > 5) {
+                    event.preventDefault();
+                    showStatus(i, 'error', '❌ Max 5 lines allowed! Paste reduced.');
+                    const truncated = lines.slice(0, 5).join('\n');
+                    instance.replaceSelection(truncated);
+                } else {
+                    showStatus(i, 'success', '✓ Paste successful');
+                }
+            });
+
+            // Monitor line count
+            editors[i].on('change', (instance) => {
+                const lines = instance.lineCount();
+                if (lines > 5) {
+                    showStatus(i, 'warning', `⚠️ ${lines} lines (max 5). Consider condensing.`);
+                } else if (lines > 0) {
+                    showStatus(i, 'success', `✓ ${lines} line${lines > 1 ? 's' : ''} entered`);
+                } else {
+                    clearStatus(i);
+                }
+            });
+        });
+    }
+
+    function showStatus(i, type, message) {
+        const status = document.getElementById(`status-${i}`);
+        status.className = `editor-status show ${type}`;
+        status.textContent = message;
+    }
+
+    function clearStatus(i) {
+        const status = document.getElementById(`status-${i}`);
+        status.classList.remove('show');
+    }
+
     function submitCode() {
-        // Show the solution for the current task
+        const code = editors[current].getValue();
+        const lines = code.split('\n').filter(l => l.trim()).length;
+
+        if (lines === 0) {
+            showStatus(current, 'error', '❌ Please write some code first');
+            return;
+        }
+
+        if (lines > 5) {
+            showStatus(current, 'error', `❌ Code exceeds 5 lines (${lines} lines)`);
+            return;
+        }
+
+        // Show solution
         document.getElementById(`sol-${current}`).classList.add('show');
         document.getElementById('submit-code-btn').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'flex';
 
-        // Update logic for the final task
+        // Update button text if last task
         if (current === tasks.length - 1) {
             const nextBtn = document.getElementById('next-btn');
-            nextBtn.textContent = "Finish & Return to Dashboard";
+            nextBtn.textContent = "✓ Finish & Return to Dashboard";
             nextBtn.classList.remove('btn-primary');
             nextBtn.classList.add('btn-success');
             
-            // Set final completion logic for Intermediate Level
             nextBtn.onclick = () => {
                 localStorage.setItem('int_assign_completed', 'true');
                 window.location.href = '../index.html';
             };
         }
+
+        showStatus(current, 'success', '✓ Great! Review the solution below.');
     }
 
     function move(dir) {
+        // Hide current task
         document.getElementById(`task-${current}`).classList.remove('active');
+        clearStatus(current);
+        
+        // Update index
         current = Math.max(0, Math.min(tasks.length - 1, current + dir));
+        
+        // Show new task
         document.getElementById(`task-${current}`).classList.add('active');
         
-        document.getElementById('progress-text').textContent = `Task ${current + 1} of ${tasks.length}`;
+        // UI Updates
+        const progress = Math.round(((current + 1) / tasks.length) * 100);
+        document.getElementById('progress-text').textContent = `${current + 1} / ${tasks.length}`;
+        document.getElementById('progress-fill').style.width = progress + '%';
         document.getElementById('prev-btn').disabled = (current === 0);
         
-        // Reset buttons for the new task
-        document.getElementById('submit-code-btn').style.display = 'block';
+        // Reset buttons
+        document.getElementById('submit-code-btn').style.display = 'flex';
         document.getElementById('next-btn').style.display = 'none';
+
+        // Refresh editor
+        setTimeout(() => editors[current].refresh(), 100);
     }
 </script>
+
 </body>
 </html>
-
