@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Mastery Journey - Dashboard</title>
 
-
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -24,6 +22,8 @@
             --success-light: #66bb6a;
             --warning: #f57c00;
             --danger: #c62828;
+            --final: #673ab7;
+            --final-dark: #512da8;
             --bg-main: #f5f7fa;
             --bg-card: #ffffff;
             --text-main: #1a1a1a;
@@ -44,45 +44,46 @@
 
         /* ============ SIDEBAR ============ */
        .sidebar {
-    width: 280px;
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-    padding: 30px 20px;
-    border-right: 1px solid var(--border);
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
-    color: white;
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
-}
+            width: 280px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 30px 20px;
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            color: white;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
 
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 40px;
-}
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
 
-.sidebar-logo {
-    /* Removed fixed width, height, background, and border-radius */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%; /* Ensures the container doesn't overflow */
-}
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 100%; 
+        }
 
-/* Add this to ensure the actual image scales correctly inside the sidebar */
-.sidebar-logo img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-}
+        .sidebar-logo img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
 
-.sidebar h3 {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
+        .sidebar h3 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
         .progress-section {
             margin-bottom: 30px;
         }
@@ -151,14 +152,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .header {
@@ -332,14 +327,8 @@
         }
 
         @keyframes pulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
         }
 
         .level-progress {
@@ -396,14 +385,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .completion-icon {
@@ -449,115 +432,45 @@
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 240px;
-            }
-
-            .main-content {
-                margin-left: 240px;
-                padding: 25px;
-            }
-
-            .grid {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            }
+            .sidebar { width: 240px; }
+            .main-content { margin-left: 240px; padding: 25px; }
+            .grid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
         }
 
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                padding: 20px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .level-card {
-                padding: 20px;
-            }
-
-            .completion-content {
-                padding: 30px;
-                max-width: 90%;
-            }
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .header h1 { font-size: 28px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .level-card { padding: 20px; }
+            .completion-content { padding: 30px; max-width: 90%; }
         }
 
         @media (max-width: 480px) {
-            .sidebar {
-                padding: 15px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
-            .step-btn {
-                padding: 12px;
-                font-size: 12px;
-            }
-
-            .level-progress {
-                flex-direction: column;
-                gap: 10px;
-            }
+            .sidebar { padding: 15px; }
+            .header h1 { font-size: 24px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .step-btn { padding: 12px; font-size: 12px; }
+            .level-progress { flex-direction: column; gap: 10px; }
         }
 
         /* ============ ANIMATIONS ============ */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .level-card {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .level-card:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .level-card:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .level-card:nth-child(4) {
-            animation-delay: 0.3s;
-        }
+        .level-card { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+        .level-card:nth-child(1) { animation-delay: 0.1s; }
+        .level-card:nth-child(2) { animation-delay: 0.2s; }
+        .level-card:nth-child(3) { animation-delay: 0.3s; }
+        .level-card:nth-child(4) { animation-delay: 0.4s; }
 
     </style>
 </head>
 
 <body>
 
-<!-- ============ SIDEBAR ============ -->
 <div class="sidebar">
     <div class="sidebar-header">
     <div class="sidebar-logo">
@@ -571,7 +484,7 @@
             <div class="progress-fill" id="overall-progress"></div>
         </div>
         <div class="progress-stats">
-            <span id="progress-completed">0/12</span>
+            <span id="progress-completed">0/13</span>
             <span id="progress-percent">0%</span>
         </div>
     </div>
@@ -581,7 +494,6 @@
     </button>
 </div>
 
-<!-- ============ MAIN CONTENT ============ -->
 <div class="main-content">
 
     <div class="header">
@@ -589,7 +501,6 @@
         <p class="header-subtitle">Master Large Language Models from basics to advanced concepts</p>
     </div>
 
-    <!-- LEVEL 1 -->
     <div class="level-card">
         <div class="level-header">
             <div class="level-badge">
@@ -630,7 +541,6 @@
         </div>
     </div>
 
-    <!-- LEVEL 2 -->
     <div class="level-card">
         <div class="level-header">
             <div class="level-badge" style="background: linear-gradient(135deg, var(--warning) 0%, #ff9800 100%);">
@@ -671,7 +581,6 @@
         </div>
     </div>
 
-    <!-- LEVEL 3 -->
     <div class="level-card">
         <div class="level-header">
             <div class="level-badge" style="background: linear-gradient(135deg, var(--danger) 0%, #e53935 100%);">
@@ -712,9 +621,32 @@
         </div>
     </div>
 
+    <div class="level-card" id="final-card">
+        <div class="level-header">
+            <div class="level-badge" style="background: linear-gradient(135deg, var(--final) 0%, var(--final-dark) 100%);">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="level-info">
+                <h2>Final Assessment</h2>
+                <p>Test your comprehensive knowledge across all modules to complete the journey.</p>
+            </div>
+        </div>
+        <div class="grid" style="grid-template-columns: 1fr;">
+            <a href="consolidated/mcqs.html" class="step-btn locked" id="final-exam" title="Take Final Assessment">
+                <i class="fas fa-flag-checkered"></i>
+                <span style="font-size: 15px;">Take Final Assessment</span>
+            </a>
+        </div>
+        <div class="level-progress">
+            <div class="progress-item">
+                <div class="progress-item-label">Status</div>
+                <div class="progress-item-value" id="final-status" style="color: var(--final);">Locked</div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- ============ COMPLETION BANNER ============ -->
 <div class="completion-banner" id="completion-banner">
     <div class="completion-content">
         <div class="completion-icon">
@@ -766,8 +698,9 @@ function checkProgress() {
         { prefix: 'adv', name: 'Level 3' }
     ];
 
-    let totalCompleted = 0;
+    let totalStepsCompleted = 0;
 
+    // Evaluate standard modules
     levels.forEach(level => {
         const preDone = localStorage.getItem(`${level.prefix}_pre_completed`);
         const postDone = localStorage.getItem(`${level.prefix}_post_completed`);
@@ -776,50 +709,74 @@ function checkProgress() {
         let levelCompletion = 0;
         let nextStep = 'Locked';
 
-        // Update UI elements
         const preBtn = document.getElementById(`${level.prefix}-pre`);
         const pptBtn = document.getElementById(`${level.prefix}-ppt`);
         const postBtn = document.getElementById(`${level.prefix}-post`);
         const assignBtn = document.getElementById(`${level.prefix}-assign`);
 
+        // Base unlock (Pre is generally open for the active level, managed externally or implicitly)
+        // We will assume if it's the current level, it defaults to Pre. 
+        // For simplicity, we just use local state to cascade unlocks.
+        
         if (preDone) {
-            preBtn.classList.add('completed');
-            preBtn.classList.remove('locked');
-            pptBtn.classList.add('unlocked');
-            pptBtn.classList.remove('locked');
-            postBtn.classList.add('unlocked');
-            postBtn.classList.remove('locked');
-            levelCompletion += 25;
-            nextStep = 'Content';
+            preBtn.classList.add('completed'); preBtn.classList.remove('locked', 'unlocked');
+            pptBtn.classList.add('unlocked'); pptBtn.classList.remove('locked');
+            postBtn.classList.add('unlocked'); postBtn.classList.remove('locked');
+            levelCompletion = 25;
+            totalStepsCompleted += 1; // Pre done
+            nextStep = 'Content / Quiz';
         } else {
-            pptBtn.classList.add('locked');
-            postBtn.classList.add('locked');
-            assignBtn.classList.add('locked');
+            // Unlock Pre if we want it clickable by default, assuming linear flow
+            preBtn.classList.add('unlocked'); preBtn.classList.remove('locked');
+            pptBtn.classList.add('locked'); postBtn.classList.add('locked'); assignBtn.classList.add('locked');
+            nextStep = 'Pre-Assessment';
         }
 
         if (postDone) {
-            postBtn.classList.add('completed');
-            postBtn.classList.remove('locked');
-            assignBtn.classList.add('unlocked');
-            assignBtn.classList.remove('locked');
-            levelCompletion += 25;
+            postBtn.classList.add('completed'); postBtn.classList.remove('locked', 'unlocked');
+            pptBtn.classList.add('completed'); pptBtn.classList.remove('unlocked', 'locked'); // Assume content viewed
+            assignBtn.classList.add('unlocked'); assignBtn.classList.remove('locked');
+            levelCompletion = 75;
+            totalStepsCompleted += 2; // Content + Post done
             nextStep = 'Assignment';
         }
 
         if (assignDone) {
-            assignBtn.classList.add('completed');
-            assignBtn.classList.remove('locked');
-            levelCompletion += 25;
+            assignBtn.classList.add('completed'); assignBtn.classList.remove('locked', 'unlocked');
+            levelCompletion = 100;
+            totalStepsCompleted += 1; // Assign done
             nextStep = '✓ Complete';
-            totalCompleted++;
         }
 
-        // Update level completion percentage
         document.getElementById(`${level.prefix}-completion`).textContent = levelCompletion + '%';
         document.getElementById(`${level.prefix}-next`).textContent = nextStep;
     });
 
-    updateOverallProgress(totalCompleted);
+    // Evaluate Final Assessment Logic
+    const advDone = localStorage.getItem("adv_assign_completed");
+    const finalDone = localStorage.getItem("final_assessment_completed");
+    
+    const finalBtn = document.getElementById("final-exam");
+    const finalStatus = document.getElementById("final-status");
+
+    if (advDone) {
+        if (finalDone) {
+            finalBtn.classList.add('completed');
+            finalBtn.classList.remove('locked', 'unlocked');
+            finalStatus.textContent = '✓ Passed';
+            totalStepsCompleted += 1; // Final done
+        } else {
+            finalBtn.classList.add('unlocked');
+            finalBtn.classList.remove('locked', 'completed');
+            finalStatus.textContent = 'Ready';
+        }
+    } else {
+        finalBtn.classList.add('locked');
+        finalBtn.classList.remove('unlocked', 'completed');
+        finalStatus.textContent = 'Locked';
+    }
+
+    updateOverallProgress(totalStepsCompleted);
     checkFullCompletion();
 }
 
@@ -827,12 +784,12 @@ function checkProgress() {
 // UPDATE OVERALL PROGRESS
 //////////////////////////
 
-function updateOverallProgress(completed) {
-    const total = 12; // 4 steps × 3 levels
-    const progressPercent = Math.round((completed * 4 / total) * 100);
+function updateOverallProgress(completedSteps) {
+    const totalSteps = 13; // 4 steps × 3 levels + 1 Final Assessment
+    const progressPercent = Math.round((completedSteps / totalSteps) * 100);
     
     document.getElementById('overall-progress').style.width = progressPercent + '%';
-    document.getElementById('progress-completed').textContent = completed * 4 + '/' + total;
+    document.getElementById('progress-completed').textContent = completedSteps + '/' + totalSteps;
     document.getElementById('progress-percent').textContent = progressPercent + '%';
 }
 
@@ -841,12 +798,9 @@ function updateOverallProgress(completed) {
 //////////////////////////
 
 function checkFullCompletion() {
-    const allDone =
-        localStorage.getItem("basics_assign_completed") &&
-        localStorage.getItem("int_assign_completed") &&
-        localStorage.getItem("adv_assign_completed");
+    const isFinalDone = localStorage.getItem("final_assessment_completed");
 
-    if (allDone) {
+    if (isFinalDone) {
         setTimeout(() => completeCourse(), 500);
     }
 }
