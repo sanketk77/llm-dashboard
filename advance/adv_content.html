@@ -426,6 +426,11 @@
             border-radius: 12px;
             color: #b71c1c;
             margin-bottom: 24px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 2;
         }
 
         .pdf-error.show {
@@ -649,21 +654,23 @@
         <p>Deep dive into LLM Agents, LangGraph workflows, and production scaling strategies.</p>
     </div>
 
-    <!-- TOGGLE -->
     <div class="mode-selector">
         <button class="mode-btn active" onclick="switchMode('video', this)">🎥 Recorded Session</button>
         <button class="mode-btn" onclick="switchMode('ppt', this)">📄 Technical Slides</button>
     </div>
 
-    <!-- VIDEO -->
     <div id="video-content" class="content-area active">
         <div class="card">
             <h3>🎬 Advanced Lecture</h3>
             <div class="video-wrapper">
-                <video controls>
-                    <source src="https://res.cloudinary.com/dj3shi5ju/video/upload/v1774863371/uemx7jw5jftvmilzpejj.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <iframe 
+                    src="https://drive.google.com/file/d/1qDuFi6hMnNV0hUlv_w70Bg7zbeJnA2gT/preview" 
+                    width="100%" 
+                    height="450" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen
+                    style="border: 2px solid #eee; border-radius: 8px;">
+                </iframe>
             </div>
 
             <div class="highlights-box">
@@ -680,44 +687,30 @@
         </div>
     </div>
 
-    <!-- PDF SECTION -->
-    <div id="ppt-content" class="content-area">
+   <div id="ppt-content" class="content-area">
         <div class="card">
             <h3>📊 Technical Slides</h3>
-            
-            <div id="pdf-error" class="pdf-error">
-                <div class="pdf-error-title">⚠️ PDF Preview Unavailable</div>
-                <div class="pdf-error-text">
-                    The PDF viewer couldn't load. This can happen due to browser restrictions or file permissions.
-                </div>
-                <div class="pdf-alternatives">
-                    <a href="https://docs.google.com/document/d/1zbOLYm65-2hH3uSiseBrxuzGTYmd1zGQ/export?format=pdf" target="_blank" class="pdf-alt-btn">
-                        📥 Download PDF
-                    </a>
-                    <a href="https://drive.google.com/file/d/1zbOLYm65-2hH3uSiseBrxuzGTYmd1zGQ/view?usp=sharing" target="_blank" class="pdf-alt-btn">
-                        🌐 Open in Google Drive
-                    </a>
-                    <button onclick="retryPdfLoad()" class="pdf-alt-btn">
-                        🔄 Retry Loading
-                    </button>
-                </div>
-            </div>
-
             <div class="pdf-container">
-                <div class="pdf-loading" id="pdf-loader">Loading slides...</div>
+                <div id="pdf-loader" class="pdf-loading">Loading slides...</div>
+                
+                <div id="pdf-error" class="pdf-error">
+                    <div class="pdf-error-title">Failed to Load Slides</div>
+                    <div class="pdf-error-text">There was a problem embedding the presentation.</div>
+                    <div class="pdf-alternatives">
+                        <button onclick="retryPdfLoad()" class="pdf-alt-btn">Retry Loading</button>
+                    </div>
+                </div>
+
                 <iframe 
                     id="pdf-iframe"
                     src="https://drive.google.com/file/d/1zbOLYm65-2hH3uSiseBrxuzGTYmd1zGQ/preview"
                     title="Technical Slides PDF"
-                    loading="lazy"
-                    allow="autoplay"
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation">
+                    loading="lazy">
                 </iframe>
             </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer-nav">
         <a href="adv_pre_assessment.html" class="btn btn-outline">← Review Pre-Assessment</a>
         <button onclick="markComplete()" class="btn btn-primary">Mark as Completed →</button>
@@ -729,14 +722,14 @@
 let pdfLoadAttempts = 0;
 const MAX_PDF_LOAD_ATTEMPTS = 2;
 
-// GATEKEEPER: Check if Pre-Assessment was completed
+// Re-enabled window.onload structure but kept the gatekeeper logic commented for your testing
 window.onload = function() {
-    const preDone = localStorage.getItem('adv_pre_completed');
-    if (!preDone) {
-        alert("Please complete the Advanced Pre-Assessment before accessing learning materials.");
-        window.location.href = "adv_pre_assessment.html";
-        return;
-    }
+    // const preDone = localStorage.getItem('adv_pre_completed');
+    // if (!preDone) {
+    //     alert("Please complete the Advanced Pre-Assessment before accessing learning materials.");
+    //     window.location.href = "adv_pre_assessment.html";
+    //     return;
+    // }
 
     // Hide loading message after 3 seconds
     setTimeout(() => {
@@ -749,19 +742,21 @@ window.onload = function() {
     // Handle iframe load errors
     const iframe = document.getElementById('pdf-iframe');
     
-    iframe.addEventListener('load', () => {
-        console.log('PDF loaded successfully');
-        const loader = document.getElementById('pdf-loader');
-        if (loader) {
-            loader.classList.add('hidden');
-        }
-        document.getElementById('pdf-error').classList.remove('show');
-    });
+    if(iframe) {
+        iframe.addEventListener('load', () => {
+            console.log('PDF loaded successfully');
+            const loader = document.getElementById('pdf-loader');
+            if (loader) {
+                loader.classList.add('hidden');
+            }
+            document.getElementById('pdf-error').classList.remove('show');
+        });
 
-    iframe.addEventListener('error', () => {
-        console.error('PDF failed to load');
-        showPdfError();
-    });
+        iframe.addEventListener('error', () => {
+            console.error('PDF failed to load');
+            showPdfError();
+        });
+    }
 
     // Fallback: Show error if PDF doesn't load after 5 seconds
     setTimeout(() => {
@@ -770,7 +765,7 @@ window.onload = function() {
             showPdfError();
         }
     }, 5000);
-};
+}; // <--- This closing brace was causing the Syntax Error because the opening line was commented out!
 
 function showPdfError() {
     const loader = document.getElementById('pdf-loader');
@@ -779,7 +774,9 @@ function showPdfError() {
     if (loader) {
         loader.classList.add('hidden');
     }
-    errorDiv.classList.add('show');
+    if (errorDiv) {
+        errorDiv.classList.add('show');
+    }
 }
 
 function retryPdfLoad() {

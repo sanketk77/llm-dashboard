@@ -51,6 +51,7 @@
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
+            z-index: 100;
         }
 
         .sidebar-header {
@@ -250,25 +251,13 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== CARD ===== */
@@ -279,6 +268,7 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
+            margin-bottom: 24px;
         }
 
         .card:hover {
@@ -303,7 +293,6 @@
             overflow: hidden;
             border-radius: 12px;
             background: #000;
-            margin-bottom: 20px;
         }
 
         video,
@@ -369,7 +358,6 @@
             background: var(--bg-light);
             position: relative;
             box-shadow: var(--shadow);
-            margin-bottom: 32px;
         }
 
         .pdf-container iframe {
@@ -426,6 +414,11 @@
             border-radius: 12px;
             color: #b71c1c;
             margin-bottom: 24px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 2;
         }
 
         .pdf-error.show {
@@ -477,7 +470,7 @@
             display: flex;
             justify-content: center;
             gap: 16px;
-            margin-top: 40px;
+            margin-top: 16px;
             flex-wrap: wrap;
             padding-bottom: 40px;
         }
@@ -524,22 +517,10 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 260px;
-            }
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .pdf-container {
-                height: 800px;
-            }
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; padding: 30px; }
+            .header h1 { font-size: 28px; }
+            .pdf-container { height: 800px; }
         }
 
         @media (max-width: 768px) {
@@ -550,73 +531,27 @@
                 border-right: none;
                 border-bottom: 1px solid var(--border);
             }
-
-            .sidebar-content {
-                flex-direction: row;
-                gap: 20px;
-            }
-
+            .sidebar-content { flex-direction: row; gap: 20px; }
             .main-content {
                 margin-left: 0;
                 padding: 20px;
                 max-width: 100%;
             }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .mode-selector {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .mode-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .pdf-container {
-                height: 600px;
-            }
-
-            .footer-nav {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .pdf-alternatives {
-                flex-direction: column;
-            }
-
-            .pdf-alt-btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .header h1 { font-size: 24px; }
+            .mode-selector { width: 100%; flex-direction: column; }
+            .mode-btn { width: 100%; justify-content: center; }
+            .pdf-container { height: 600px; }
+            .footer-nav { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .pdf-alternatives { flex-direction: column; }
+            .pdf-alt-btn { width: 100%; justify-content: center; }
         }
 
         /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
     </style>
 </head>
 <body>
@@ -649,49 +584,45 @@
         <p>Mastering Retrieval-Augmented Generation (RAG) and Fine-tuning strategies.</p>
     </div>
 
-    <!-- TOGGLE -->
     <div class="mode-selector">
         <button class="mode-btn active" onclick="switchMode('video', this)">🎥 Video Session</button>
         <button class="mode-btn" onclick="switchMode('ppt', this)">📄 Technical Slides</button>
     </div>
 
-   <div id="video-content" class="content-area active">
-    
-    <div class="card" style="margin-bottom: 25px;">
-        <h3>🎬 Intermediate Lecture</h3>
-        <div class="video-wrapper">
-            <iframe 
-                src="https://drive.google.com/file/d/16-D7wPlopIAkZnX04Ysr1H_yQNK0KEaY/preview" 
-                width="100%" height="450" allowfullscreen allow="autoplay"
-                style="border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            </iframe>
+    <div id="video-content" class="content-area active">
+        
+        <div class="card">
+            <h3>🎬 Intermediate Lecture</h3>
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://drive.google.com/file/d/1felFEOZDS4MHW7u-EJuS85fyp1OKnvu-/preview" 
+                    width="100%" height="450" allowfullscreen allow="autoplay"
+                    style="border: 1px solid #ddd; border-radius: 12px;">
+                </iframe>
+            </div>
         </div>
-    </div>
 
-    <div class="card" style="margin-bottom: 25px;">
-        <h3>📹 Video Lecture - Module 2</h3>
-        <div class="video-wrapper">
-            <iframe 
-                src="https://drive.google.com/file/d/1felFEOZDS4MHW7u-EJuS85fyp1OKnvu-/preview" 
-                width="100%" height="450" allowfullscreen allow="autoplay"
-                style="border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            </iframe>
+        <div class="card">
+            <h3>📹 Video Lecture - Module 2</h3>
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://drive.google.com/file/d/16-D7wPlopIAkZnX04Ysr1H_yQNK0KEaY/preview"  
+                    width="100%" height="450" allowfullscreen allow="autoplay"
+                    style="border: 1px solid #ddd; border-radius: 12px;">
+                </iframe>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <h3>🎥 Video Lecture - Module 3</h3>
-        <div class="video-wrapper">
-            <iframe 
-                src="https://drive.google.com/file/d/10azttjTpnSJbEnoX42AoCkyElQB6h_eR/preview" 
-                width="100%" height="450" allowfullscreen allow="autoplay"
-                style="border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            </iframe>
-        </div>
-    </div>
-
-</div>
-
+        <div class="card">
+            <h3>🎥 Video Lecture - Module 3</h3>
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://drive.google.com/file/d/10azttjTpnSJbEnoX42AoCkyElQB6h_eR/preview" 
+                    width="100%" height="450" allowfullscreen allow="autoplay"
+                    style="border: 1px solid #ddd; border-radius: 12px;">
+                </iframe>
+            </div>
+            
             <div class="highlights-box">
                 <strong class="highlights-title">📌 Module Highlights</strong>
                 <ul class="highlights-list">
@@ -704,33 +635,34 @@
                 </ul>
             </div>
         </div>
+
     </div>
 
-    <!-- PDF SECTION -->
     <div id="ppt-content" class="content-area">
         <div class="card">
             <h3>📊 Technical Slides</h3>
             
-            <div id="pdf-error" class="pdf-error">
-                <div class="pdf-error-title">⚠️ PDF Preview Unavailable</div>
-                <div class="pdf-error-text">
-                    The PDF viewer couldn't load. This can happen due to browser restrictions or file permissions.
-                </div>
-                <div class="pdf-alternatives">
-                    <a href="https://docs.google.com/document/d/1j5r7973it0ok3G3dRNHMw6BcGpK1sGdw/export?format=pdf" target="_blank" class="pdf-alt-btn">
-                        📥 Download PDF
-                    </a>
-                    <a href="https://drive.google.com/file/d/1j5r7973it0ok3G3dRNHMw6BcGpK1sGdw/view?usp=sharing" target="_blank" class="pdf-alt-btn">
-                        🌐 Open in Google Drive
-                    </a>
-                    <button onclick="retryPdfLoad()" class="pdf-alt-btn">
-                        🔄 Retry Loading
-                    </button>
-                </div>
-            </div>
-
             <div class="pdf-container">
                 <div class="pdf-loading" id="pdf-loader">Loading slides...</div>
+
+                <div id="pdf-error" class="pdf-error">
+                    <div class="pdf-error-title">⚠️ PDF Preview Unavailable</div>
+                    <div class="pdf-error-text">
+                        The PDF viewer couldn't load. This can happen due to browser restrictions or file permissions.
+                    </div>
+                    <div class="pdf-alternatives">
+                        <a href="https://docs.google.com/document/d/1j5r7973it0ok3G3dRNHMw6BcGpK1sGdw/export?format=pdf" target="_blank" class="pdf-alt-btn">
+                            📥 Download PDF
+                        </a>
+                        <a href="https://drive.google.com/file/d/1j5r7973it0ok3G3dRNHMw6BcGpK1sGdw/view?usp=sharing" target="_blank" class="pdf-alt-btn">
+                            🌐 Open in Google Drive
+                        </a>
+                        <button onclick="retryPdfLoad()" class="pdf-alt-btn">
+                            🔄 Retry Loading
+                        </button>
+                    </div>
+                </div>
+
                 <iframe 
                     id="pdf-iframe"
                     src="https://drive.google.com/file/d/1j5r7973it0ok3G3dRNHMw6BcGpK1sGdw/preview"
@@ -743,7 +675,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer-nav">
         <a href="int_pre_assessment.html" class="btn btn-outline">← Review Pre-Assessment</a>
         <button onclick="markComplete()" class="btn btn-primary">Mark as Completed →</button>
@@ -767,19 +698,21 @@ window.onload = function() {
     // Handle iframe load errors
     const iframe = document.getElementById('pdf-iframe');
     
-    iframe.addEventListener('load', () => {
-        console.log('PDF loaded successfully');
-        const loader = document.getElementById('pdf-loader');
-        if (loader) {
-            loader.classList.add('hidden');
-        }
-        document.getElementById('pdf-error').classList.remove('show');
-    });
+    if(iframe) {
+        iframe.addEventListener('load', () => {
+            console.log('PDF loaded successfully');
+            const loader = document.getElementById('pdf-loader');
+            if (loader) {
+                loader.classList.add('hidden');
+            }
+            document.getElementById('pdf-error').classList.remove('show');
+        });
 
-    iframe.addEventListener('error', () => {
-        console.error('PDF failed to load');
-        showPdfError();
-    });
+        iframe.addEventListener('error', () => {
+            console.error('PDF failed to load');
+            showPdfError();
+        });
+    }
 
     // Fallback: Show error if PDF doesn't load after 5 seconds
     setTimeout(() => {
@@ -797,7 +730,9 @@ function showPdfError() {
     if (loader) {
         loader.classList.add('hidden');
     }
-    errorDiv.classList.add('show');
+    if (errorDiv) {
+        errorDiv.classList.add('show');
+    }
 }
 
 function retryPdfLoad() {
@@ -823,7 +758,7 @@ function retryPdfLoad() {
             }
         }, 4000);
     } else {
-        alert('❌ Max retry attempts reached. Please try downloading the PDF instead.');
+        alert('❌ Max retry attempts reached. Please use the alternative links to view the document.');
     }
 }
 
@@ -845,14 +780,12 @@ function markComplete() {
     
     // Show success feedback
     const btn = event.target;
-    const originalText = btn.textContent;
     btn.textContent = "✓ Completed! Redirecting...";
     btn.style.opacity = '0.7';
     btn.disabled = true;
     
     setTimeout(() => {
         alert("🎉 Intermediate module content completed! Post-Assessment is now unlocked.");
-        
         // Navigate to the Intermediate Post-Assessment
         window.location.href = 'int_post_assessment.html';
     }, 1000);

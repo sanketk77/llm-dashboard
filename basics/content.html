@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Basics — Learning Materials</title>
-
     <style>
         :root {
             --primary: #1a73e8;
             --primary-light: #e8f0fe;
             --primary-dark: #1557b0;
+            --success: #1e8e3e;
+            --success-light: #f1f8e9;
             --bg: #f8f9fa;
             --bg-light: #ffffff;
             --text-main: #202124;
             --text-sub: #5f6368;
             --text-light: #80868b;
             --border: #dadce0;
-            --success: #1e8e3e;
             --shadow: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
         }
@@ -31,7 +31,7 @@
             height: 100%;
         }
 
-        body {
+        body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #f8f9fa 0%, #f0f4f8 100%);
             color: var(--text-main);
@@ -49,6 +49,8 @@
             height: 100vh;
             overflow-y: auto;
             box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar-header {
@@ -80,23 +82,26 @@
 
         .sidebar-content {
             padding: 30px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
         }
 
         .level-info {
-            margin-bottom: 30px;
-            padding: 16px;
-            background: var(--primary-light);
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+            padding: 20px;
             border-radius: 12px;
             border-left: 4px solid var(--primary);
         }
 
         .level-label {
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-light);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .level-name {
@@ -105,16 +110,26 @@
             font-size: 16px;
         }
 
+        .level-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(26, 115, 232, 0.1);
+            color: var(--primary);
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
         .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            margin-top: auto;
         }
 
         .sidebar-nav a {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             padding: 12px 16px;
             text-decoration: none;
             color: var(--text-main);
@@ -127,7 +142,7 @@
         .sidebar-nav a:hover {
             background: var(--primary-light);
             color: var(--primary);
-            transform: translateX(4px);
+            transform: translateX(-4px);
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -146,6 +161,7 @@
         }
 
         .badge {
+            display: inline-block;
             font-size: 11px;
             font-weight: 700;
             padding: 6px 14px;
@@ -153,7 +169,6 @@
             background: linear-gradient(135deg, var(--primary-light) 0%, #d2e3fc 100%);
             color: var(--primary);
             margin-bottom: 16px;
-            display: inline-block;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: 0 2px 4px rgba(26, 115, 232, 0.1);
@@ -235,25 +250,13 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== CARD ===== */
@@ -262,8 +265,6 @@
             border-radius: 16px;
             padding: 28px;
             border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
         }
@@ -304,7 +305,8 @@
             border: none;
         }
 
-        .learning-objectives {
+        /* ===== HIGHLIGHTS ===== */
+        .highlights-box {
             margin-top: 24px;
             padding: 20px;
             background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
@@ -312,7 +314,7 @@
             border-left: 4px solid var(--primary);
         }
 
-        .learning-objectives strong {
+        .highlights-title {
             display: block;
             color: var(--primary);
             font-size: 14px;
@@ -322,26 +324,27 @@
             margin-bottom: 12px;
         }
 
-        .learning-objectives ul {
+        .highlights-list {
             list-style: none;
             padding-left: 0;
         }
 
-        .learning-objectives li {
+        .highlights-list li {
             padding: 8px 0;
             padding-left: 24px;
             position: relative;
             color: var(--text-main);
             font-weight: 500;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        .learning-objectives li:before {
-            content: '✓';
+        .highlights-list li:before {
+            content: '→';
             position: absolute;
             left: 0;
-            color: var(--success);
+            color: var(--primary);
             font-weight: 700;
-            font-size: 16px;
         }
 
         /* ===== PDF CONTAINER ===== */
@@ -354,6 +357,7 @@
             background: var(--bg-light);
             position: relative;
             box-shadow: var(--shadow);
+            margin-bottom: 32px;
         }
 
         .pdf-container iframe {
@@ -379,6 +383,12 @@
             font-weight: 500;
             gap: 16px;
             z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .pdf-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .pdf-loading::before {
@@ -395,12 +405,74 @@
             to { transform: rotate(360deg); }
         }
 
+        /* ===== ERROR MESSAGE ===== */
+        .pdf-error {
+            display: none;
+            padding: 24px;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 4px solid #d32f2f;
+            border-radius: 12px;
+            color: #b71c1c;
+            margin-bottom: 24px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 2;
+        }
+
+        .pdf-error.show {
+            display: block;
+        }
+
+        .pdf-error-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .pdf-error-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .pdf-alternatives {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .pdf-alt-btn {
+            padding: 10px 16px;
+            background: white;
+            color: #d32f2f;
+            border: 1px solid #d32f2f;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pdf-alt-btn:hover {
+            background: #d32f2f;
+            color: white;
+        }
+
         /* ===== FOOTER NAV ===== */
         .footer-nav {
-            margin-top: 40px;
             display: flex;
+            justify-content: center;
             gap: 16px;
+            margin-top: 40px;
             flex-wrap: wrap;
+            padding-bottom: 40px;
         }
 
         .btn {
@@ -429,10 +501,6 @@
             box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
         .btn-outline {
             border: 2px solid var(--border);
             background: var(--bg-light);
@@ -449,90 +517,43 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 260px;
-            }
-
-            .main-content {
-                margin-left: 260px;
-                padding: 30px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .pdf-container {
-                height: 800px;
-            }
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; padding: 30px; }
+            .header h1 { font-size: 28px; }
+            .pdf-container { height: 800px; }
         }
 
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
-                z-index: 1000;
                 width: 100%;
-                transition: transform 0.3s ease;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
             }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
+            .sidebar-content { flex-direction: row; gap: 20px; }
             .main-content {
                 margin-left: 0;
                 padding: 20px;
+                max-width: 100%;
             }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .mode-selector {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .mode-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .pdf-container {
-                height: 600px;
-            }
-
-            .footer-nav {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .header h1 { font-size: 24px; }
+            .mode-selector { width: 100%; flex-direction: column; }
+            .mode-btn { width: 100%; justify-content: center; }
+            .pdf-container { height: 600px; }
+            .footer-nav { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+            .pdf-alternatives { flex-direction: column; }
+            .pdf-alt-btn { width: 100%; justify-content: center; }
         }
 
         /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
     </style>
 </head>
-
 <body>
 
 <div class="sidebar">
@@ -544,8 +565,9 @@
 
     <div class="sidebar-content">
         <div class="level-info">
-            <div class="level-label">Current Level</div>
+            <div class="level-label">📚 Current Track</div>
             <div class="level-name">LLM Basics</div>
+            <span class="level-badge">Level 1</span>
         </div>
 
         <nav class="sidebar-nav">
@@ -559,54 +581,31 @@
     <div class="header">
         <div class="badge">📚 Learning Materials</div>
         <h1>Fundamentals of LLMs</h1>
-        <p>Watch the session or go through slides before attempting the quiz.</p>
+        <p>Watch the session or go through the technical slides before attempting the quiz.</p>
     </div>
 
-    <!-- TOGGLE -->
     <div class="mode-selector">
-        <button class="mode-btn active" onclick="switchMode('video', this)">🎥 Video</button>
-        <button class="mode-btn" onclick="switchMode('ppt', this)">📄 Slides</button>
+        <button class="mode-btn active" onclick="switchMode('video', this)">🎥 Recorded Session</button>
+        <button class="mode-btn" onclick="switchMode('ppt', this)">📄 Technical Slides</button>
     </div>
-<div id="video-content" class="content-area active">
-    <div class="card">
-        <h3>📹 Video Lecture</h3>
-        <div class="video-wrapper">
-            <iframe 
-                src="https://drive.google.com/file/d/1bhmAAk8emaUaWpvXelT1fbMAWRmYlySM/preview" 
-                width="100%" 
-                height="450" 
-                allow="autoplay; encrypted-media" 
-                allowfullscreen
-                style="border: 2px solid #eee; border-radius: 8px;">
-            </iframe>
-        </div>
-    </div>
-</div>
 
-<style>
-    /* Add this to your CSS file to make the video responsive */
-    .video-wrapper {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        /* Helps maintain aspect ratio if you prefer that over fixed height */
-        padding-top: 56.25%; /* 16:9 Aspect Ratio */
-    }
+    <div id="video-content" class="content-area active">
+        <div class="card">
+            <h3>📹 Video Lecture</h3>
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://drive.google.com/file/d/1bhmAAk8emaUaWpvXelT1fbMAWRmYlySM/preview" 
+                    width="100%" 
+                    height="450" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen
+                    style="border: 2px solid #eee; border-radius: 8px;">
+                </iframe>
+            </div>
 
-    .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-    }
-</style>
-
-            <div class="learning-objectives">
-                <strong>Learning Objectives</strong>
-                <ul>
+            <div class="highlights-box">
+                <strong class="highlights-title">📌 Learning Objectives</strong>
+                <ul class="highlights-list">
                     <li>Intro to Natural Language Processing</li>
                     <li>Understanding Transformers Architecture</li>
                     <li>Tokenization & Text Preprocessing</li>
@@ -615,13 +614,22 @@
         </div>
     </div>
 
-    <!-- PDF SECTION -->
-    <div id="ppt-content" class="content-area">
+   <div id="ppt-content" class="content-area">
         <div class="card">
             <h3>📊 Technical Slides</h3>
             <div class="pdf-container">
-                <div class="pdf-loading">Loading slides...</div>
+                <div id="pdf-loader" class="pdf-loading">Loading slides...</div>
+                
+                <div id="pdf-error" class="pdf-error">
+                    <div class="pdf-error-title">Failed to Load Slides</div>
+                    <div class="pdf-error-text">There was a problem embedding the presentation.</div>
+                    <div class="pdf-alternatives">
+                        <button onclick="retryPdfLoad()" class="pdf-alt-btn">Retry Loading</button>
+                    </div>
+                </div>
+
                 <iframe 
+                    id="pdf-iframe"
                     src="https://drive.google.com/file/d/1Dhrrl_qXgQBWKriUhPaKsrFUqFiHkLoF/preview"
                     title="Technical Slides PDF"
                     loading="lazy">
@@ -630,15 +638,93 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer-nav">
         <a href="../index.html" class="btn btn-outline">← Back</a>
-        <button class="btn btn-primary" onclick="goNext()">Continue →</button>
+        <button onclick="markComplete()" class="btn btn-primary">Continue to Assessment →</button>
     </div>
 
 </div>
 
 <script>
+let pdfLoadAttempts = 0;
+const MAX_PDF_LOAD_ATTEMPTS = 2;
+
+window.onload = function() {
+    // Hide loading message after 3 seconds as a fallback
+    setTimeout(() => {
+        const loader = document.getElementById('pdf-loader');
+        if (loader) {
+            loader.classList.add('hidden');
+        }
+    }, 3000);
+
+    // Handle iframe load errors/success
+    const iframe = document.getElementById('pdf-iframe');
+    
+    if(iframe) {
+        iframe.addEventListener('load', () => {
+            console.log('PDF loaded successfully');
+            const loader = document.getElementById('pdf-loader');
+            if (loader) {
+                loader.classList.add('hidden');
+            }
+            document.getElementById('pdf-error').classList.remove('show');
+        });
+
+        iframe.addEventListener('error', () => {
+            console.error('PDF failed to load');
+            showPdfError();
+        });
+    }
+
+    // Fallback: Show error if PDF doesn't load after 5 seconds
+    setTimeout(() => {
+        const loader = document.getElementById('pdf-loader');
+        if (loader && !loader.classList.contains('hidden')) {
+            showPdfError();
+        }
+    }, 5000);
+};
+
+function showPdfError() {
+    const loader = document.getElementById('pdf-loader');
+    const errorDiv = document.getElementById('pdf-error');
+    
+    if (loader) {
+        loader.classList.add('hidden');
+    }
+    if (errorDiv) {
+        errorDiv.classList.add('show');
+    }
+}
+
+function retryPdfLoad() {
+    pdfLoadAttempts++;
+    
+    if (pdfLoadAttempts <= MAX_PDF_LOAD_ATTEMPTS) {
+        // Clear error
+        document.getElementById('pdf-error').classList.remove('show');
+        
+        // Show loader
+        const loader = document.getElementById('pdf-loader');
+        loader.classList.remove('hidden');
+        
+        // Retry by reloading iframe
+        const iframe = document.getElementById('pdf-iframe');
+        iframe.src = iframe.src;
+        
+        // Set timeout to show error again if it fails
+        setTimeout(() => {
+            const loader = document.getElementById('pdf-loader');
+            if (loader && !loader.classList.contains('hidden')) {
+                showPdfError();
+            }
+        }, 4000);
+    } else {
+        alert('❌ Max retry attempts reached. Please try refreshing the page.');
+    }
+}
+
 function switchMode(mode, btn) {
     // Remove active from all buttons
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -651,24 +737,11 @@ function switchMode(mode, btn) {
     document.getElementById(mode + '-content').classList.add('active');
 }
 
-function goNext() {
+function markComplete() {
+    // Set completion flag for LLM Basics
     localStorage.setItem('basics_content_completed', 'true');
     window.location.href = "post_assessment.html";
 }
-
-// Hide loading message when PDF loads
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        const loader = document.querySelector('.pdf-loading');
-        if (loader) {
-            loader.style.opacity = '0';
-            loader.style.pointerEvents = 'none';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 300);
-        }
-    }, 2000);
-});
 </script>
 
 </body>
